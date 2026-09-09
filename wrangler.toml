@@ -1,0 +1,48 @@
+# health — single Cloudflare Worker that serves the static site (./) AND a
+# Withings data broker at GET /api/vitals, replacing the Google Apps Script
+# proxy (sclab/bodyscan-appscript) the site currently calls.
+#
+# Scaffold contract: this deploys and serves the site with NO KV and NO secrets.
+# /api/vitals returns 503 {error:"withings not configured"} until the KV
+# namespace + the two secrets + the client-id var below are all in place.
+name = "health"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+workers_dev = true
+
+[assets]
+directory = "."
+binding = "ASSETS"
+
+[vars]
+# Withings OAuth *client id* is not secret (it travels in the browser auth URL).
+# Copy it from the Apps Script's Script Properties (WITHINGS_CLIENT_ID).
+WITHINGS_CLIENT_ID = "3cd65aa55f5a9ca2209f90cfb1efb30a269bc2f4df11b446dd717d2e3b446833"
+# Optional: birthdate (YYYY-MM-DD) to derive the vascular-age delta headline.
+# Copy from the Apps Script's BIRTHDATE Script Property. Leave unset to omit it.
+# BIRTHDATE = "1990-01-01"
+
+# --- KV: rotated refresh token + cached snapshot/trends ---------------------
+[[kv_namespaces]]
+binding = "HEALTH_KV"
+id = "021691fdfc454f77ad7ffc3d6db89ef7"
+
+# --- Custom domain (health.sankhacooray.com) -------------------------------
+# DNS CUTOVER IS PENDING. health.sankhacooray.com currently serves THIS repo via
+# GitHub Pages (see CNAME). Do NOT uncomment until you're ready to move the
+# domain to this Worker: at cutover, delete the GitHub-Pages DNS record for the
+# host, uncomment the route below (auto-provisions the record in the
+# sankhacooray.com Cloudflare zone), and switch the site's VITALS_ENDPOINT to
+# /api/vitals. See README.md.
+# [[routes]]
+# pattern = "health.sankhacooray.com"
+# custom_domain = true
+
+# --- Secrets (set out-of-band, never stored here) --------------------------
+# The seed refresh token rotates on first use and is then persisted to KV.
+#   npx wrangler secret put WITHINGS_CLIENT_SECRET
+#   npx wrangler secret put WITHINGS_REFRESH_TOKEN
+# Copy both from the Apps Script's Script Properties (WITHINGS_CLIENT_SECRET /
+# WITHINGS_REFRESH_TOKEN). NOTE: the Apps Script and this Worker cannot share a
+# rotating refresh token — retire bodyscan-appscript once this Worker is live.

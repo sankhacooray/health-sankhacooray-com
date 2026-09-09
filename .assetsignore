@@ -1,0 +1,12 @@
+.git
+.gitignore
+.assetsignore
+wrangler.toml
+worker.js
+README.md
+CNAME
+node_modules
+.DS_Store
+.wrangler
+.vscode
+TODO.local.md

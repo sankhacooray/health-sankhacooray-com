@@ -35,9 +35,9 @@ id = "021691fdfc454f77ad7ffc3d6db89ef7"
 # host, uncomment the route below (auto-provisions the record in the
 # sankhacooray.com Cloudflare zone), and switch the site's VITALS_ENDPOINT to
 # /api/vitals. See README.md.
-# [[routes]]
-# pattern = "health.sankhacooray.com"
-# custom_domain = true
+[[routes]]
+pattern = "health.sankhacooray.com"
+custom_domain = true
 
 # --- Secrets (set out-of-band, never stored here) --------------------------
 # The seed refresh token rotates on first use and is then persisted to KV.

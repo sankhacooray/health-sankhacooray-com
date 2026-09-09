@@ -731,8 +731,8 @@ footer .links a:hover { color: var(--text); }
 
 <script>
 (function () {
-  // ── Your deployed Apps Script /exec URL (see apps-script/README.md) ──
-  var VITALS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwWUDHuQlI9JbR6ZY-94hHAv8cd7fMKsMW3L9qQ1UHLwS3NKRRYgykMNORfuKEfyx3Crw/exec';
+  // ── Withings broker on this same Worker (see worker.js /api/vitals) ──
+  var VITALS_ENDPOINT = '/api/vitals';
 
   if (VITALS_ENDPOINT.indexOf('PASTE_YOUR') === 0) return; // not wired yet → stay hidden
 
@@ -906,7 +906,7 @@ footer .links a:hover { color: var(--text); }
 <!-- ─── TRENDS · weekly / monthly charts ─────────────────── -->
 <script>
 (function () {
-  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbwWUDHuQlI9JbR6ZY-94hHAv8cd7fMKsMW3L9qQ1UHLwS3NKRRYgykMNORfuKEfyx3Crw/exec';
+  var ENDPOINT = '/api/vitals';
   var $ = function (id) { return document.getElementById(id); };
   var wrap = $('trends');
   if (!wrap) return;

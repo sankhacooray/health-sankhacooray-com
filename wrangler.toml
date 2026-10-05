@@ -46,3 +46,7 @@ custom_domain = true
 # Copy both from the Apps Script's Script Properties (WITHINGS_CLIENT_SECRET /
 # WITHINGS_REFRESH_TOKEN). NOTE: the Apps Script and this Worker cannot share a
 # rotating refresh token — retire bodyscan-appscript once this Worker is live.
+
+# Hourly: pull intraday steps + sleep detail, pre-warm snapshot/trends caches.
+[triggers]
+crons = ["17 * * * *"]

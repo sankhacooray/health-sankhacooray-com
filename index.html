@@ -34,6 +34,15 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+<script>
+// Theme: saved choice, else the OS preference. Applied before CSS paints.
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('vitals-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <style>
 :root {
   --bg: #0e120a;
@@ -50,9 +59,45 @@
   --cyan: #e3a94c;        /* amber */
   --cyan-dim: #a87d33;
   --cyan-soft: rgba(227,169,76,0.08);
+  --gold-tint: rgba(168,196,90,0.12);
+  --header-bg: rgba(14,18,10,0.7);
+  --shadow: 0 8px 24px rgba(0,0,0,0.45);
+  --danger: #ef6b6b;
+  /* chart palette (read by the trends script) */
+  --ch-deep: #a8c45a; --ch-light: #5f7038; --ch-rem: #e3a94c; --ch-awake: #3c4525;
+  --ch-line: #a8c45a; --ch-steps: #8fa64a; --ch-band: rgba(168,196,90,0.06);
+  --ch-band-sw: rgba(168,196,90,0.18); --ch-grid: #232818; --ch-axis: #6f7560;
+  --ch-hi: rgba(242,239,226,0.05); --ch-asleep: rgba(95,112,56,0.10); --ch-area: rgba(168,196,90,0.10);
+  color-scheme: dark;
   --radius: 12px;
   --radius-sm: 8px;
   --maxw: 1080px;
+}
+/* Light theme — warm paper, same olive/amber signal colours, deepened for contrast. */
+:root[data-theme="light"] {
+  --bg: #f5f3ea;
+  --surface: #fdfcf7;
+  --surface2: #eeede2;
+  --border: #d6d9c6;
+  --border-soft: #e4e6d7;
+  --text: #1c2013;
+  --text-dim: #4c5340;
+  --text-muted: #7a806d;
+  --gold: #5c771c;
+  --gold-dim: #8aa04a;
+  --gold-soft: rgba(92,119,28,0.10);
+  --cyan: #a8661a;
+  --cyan-dim: #c88f3c;
+  --cyan-soft: rgba(168,102,26,0.10);
+  --gold-tint: rgba(92,119,28,0.12);
+  --header-bg: rgba(245,243,234,0.8);
+  --shadow: 0 8px 24px rgba(60,64,40,0.16);
+  --danger: #c23b3b;
+  --ch-deep: #7d9933; --ch-light: #bccb92; --ch-rem: #d99a3a; --ch-awake: #ddd8c4;
+  --ch-line: #6b8628; --ch-steps: #8ba443; --ch-band: rgba(107,134,40,0.08);
+  --ch-band-sw: rgba(107,134,40,0.22); --ch-grid: #e2e4d4; --ch-axis: #848a76;
+  --ch-hi: rgba(28,32,19,0.05); --ch-asleep: rgba(107,134,40,0.12); --ch-area: rgba(107,134,40,0.10);
+  color-scheme: light;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -76,7 +121,7 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-.site-header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(14,18,10,0.7); border-bottom: 1px solid var(--border-soft); }
+.site-header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: var(--header-bg); border-bottom: 1px solid var(--border-soft); }
 .site-header .inner { max-width: var(--maxw); margin: 0 auto; padding: 18px 28px; display: flex; align-items: center; gap: 32px; }
 .brand { display: flex; align-items: baseline; gap: 10px; }
 .brand-mark { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--gold); letter-spacing: -0.5px; }
@@ -84,6 +129,14 @@ a { color: inherit; text-decoration: none; }
 .nav { margin-left: auto; display: flex; gap: 24px; font-size: 14px; color: var(--text-dim); }
 .nav a:hover { color: var(--text); }
 @media (max-width: 640px) { .nav { display: none; } }
+.theme-btn { flex-shrink: 0; width: 36px; height: 36px; display: grid; place-items: center; margin-left: -8px; color: var(--text-dim); background: transparent; border: 1px solid var(--border-soft); border-radius: 999px; cursor: pointer; transition: color .16s ease, background .16s ease, border-color .16s ease; }
+.theme-btn:hover { color: var(--gold); background: var(--gold-soft); border-color: var(--gold-dim); }
+.theme-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.theme-btn svg { width: 17px; height: 17px; }
+/* show the icon for the theme you'd switch TO */
+.theme-btn .i-sun, :root[data-theme="light"] .theme-btn .i-moon { display: block; }
+.theme-btn .i-moon, :root[data-theme="light"] .theme-btn .i-sun { display: none; }
+@media (max-width: 640px) { .theme-btn { margin-left: auto; } }
 
 .hero { max-width: var(--maxw); margin: 0 auto; padding: 120px 28px 80px; }
 .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; }
@@ -114,8 +167,8 @@ a { color: inherit; text-decoration: none; }
 .proto .desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
 
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-.card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 22px; transition: border-color 0.2s, transform 0.2s; }
-.card:hover { border-color: var(--border); transform: translateY(-2px); }
+.card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 22px; transition: border-color 0.2s, background 0.2s; }
+.card:hover { border-color: var(--gold-dim); }
 .card .role { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
 .card .role.cool { color: var(--cyan); }
 .card h3 { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; margin-bottom: 6px; letter-spacing: -0.2px; }
@@ -227,7 +280,7 @@ footer .links a:hover { color: var(--text); }
 
 /* research consent / invitation card */
 .consent-card { display: flex; gap: 18px; align-items: flex-start; margin-top: 30px; background: var(--gold-soft); border: 1px solid var(--gold-dim); border-radius: var(--radius); padding: 24px; }
-.consent-card .cicon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: rgba(168,196,90,0.12); color: var(--gold); }
+.consent-card .cicon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: var(--gold-tint); color: var(--gold); }
 .consent-card .ctag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 7px; }
 .consent-card h3 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 24px; line-height: 1.2; color: var(--text); margin: 0 0 10px; }
 .consent-card p { font-size: 14px; color: var(--text-dim); line-height: 1.65; margin: 0; max-width: 640px; }
@@ -256,6 +309,17 @@ footer .links a:hover { color: var(--text); }
 .tr-range { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-dim); background: transparent; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; transition: background .16s ease, color .16s ease; }
 .tr-range:hover { color: var(--text); }
 .tr-range.is-on { background: var(--gold-soft); color: var(--gold); }
+.tr-range[hidden] { display: none; }
+.tr-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.tr-daynav { display: inline-flex; align-items: center; gap: 2px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: 999px; padding: 4px; }
+.tr-daynav[hidden] { display: none; }
+.tr-daystep { font-size: 16px; line-height: 1; color: var(--text-dim); background: transparent; border: 0; border-radius: 999px; width: 30px; height: 28px; cursor: pointer; transition: background .16s ease, color .16s ease; }
+.tr-daystep:hover:not(:disabled) { color: var(--gold); background: var(--gold-soft); }
+.tr-daystep:disabled { opacity: .3; cursor: default; }
+.tr-daylabel { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text); min-width: 104px; text-align: center; }
+/* metrics without an hourly breakdown, while the Day range is on */
+.tr-metric.is-na { opacity: .38; }
+.tr-chartwrap.is-clickable { cursor: pointer; }
 .tr-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
 .tr-metric { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 14px; cursor: pointer; transition: border-color .16s ease, color .16s ease, background .16s ease; }
 .tr-metric:hover { border-color: var(--gold-dim); color: var(--text); }
@@ -269,7 +333,7 @@ footer .links a:hover { color: var(--text); }
 .tr-chartwrap { position: relative; margin-top: 24px; }
 .tr-chart { width: 100%; height: auto; display: block; overflow: visible; }
 .tr-chart text { font-family: 'JetBrains Mono', monospace; }
-.tr-tip { position: absolute; pointer-events: none; z-index: 5; top: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12px; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,0.45); min-width: 128px; transform: translateX(-50%); }
+.tr-tip { position: absolute; pointer-events: none; z-index: 5; top: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12px; color: var(--text); box-shadow: var(--shadow); min-width: 128px; transform: translateX(-50%); }
 .tr-tip[hidden] { display: none; }
 .tr-tip .tt-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
 .tr-tip .tt-row { display: flex; align-items: center; gap: 7px; line-height: 1.55; white-space: nowrap; }
@@ -283,7 +347,7 @@ footer .links a:hover { color: var(--text); }
 .tr-empty { font-size: 13px; color: var(--text-muted); font-style: italic; text-align: center; }
 @media (max-width: 640px) {
   .tr-head { align-items: flex-start; }
-  .tr-ranges { order: 2; }
+  .tr-controls { order: 2; }
 }
 
 /* ───────── contact form ───────── */
@@ -308,7 +372,7 @@ footer .links a:hover { color: var(--text); }
 .cf-spinner { display: none; width: 15px; height: 15px; border: 2px solid rgba(0,0,0,.3); border-top-color: var(--bg); border-radius: 50%; animation: cf-spin .7s linear infinite; }
 .cf-submit.is-loading .cf-spinner { display: inline-block; }
 @keyframes cf-spin { to { transform: rotate(360deg); } }
-.cf-status { min-height: 20px; margin: 14px 0 0; font-size: 14px; color: #ef6b6b; }
+.cf-status { min-height: 20px; margin: 14px 0 0; font-size: 14px; color: var(--danger); }
 .cf-success { text-align: center; padding: 16px 0; }
 .cf-success[hidden] { display: none; }
 .cf-check { width: 56px; height: 56px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 50%; background: var(--gold-soft); color: var(--gold); }
@@ -335,8 +399,33 @@ footer .links a:hover { color: var(--text); }
       <a href="#live">live</a>
       <a href="#contact">contact</a>
     </nav>
+    <button type="button" class="theme-btn" id="theme-btn" aria-label="Switch to light theme" title="Switch to light theme">
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
   </div>
 </header>
+<script>
+// Single switch: flips data-theme, remembers it, tells charts + shared footer.
+(function () {
+  var root = document.documentElement, btn = document.getElementById('theme-btn');
+  var meta = document.querySelector('meta[name="theme-color"]');
+  function sync() {
+    var light = root.getAttribute('data-theme') === 'light';
+    var label = light ? 'Switch to dark theme' : 'Switch to light theme';
+    btn.setAttribute('aria-label', label); btn.title = label;
+    if (meta) meta.setAttribute('content', light ? '#f5f3ea' : '#0e120a');
+  }
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('vitals-theme', next); } catch (e) {}
+    sync();
+    try { window.dispatchEvent(new Event('sc-themechange')); } catch (e) {}
+  });
+  sync();
+})();
+</script>
 
 <section class="hero">
   <div class="eyebrow">nutrition · fasting · metabolism</div>
@@ -652,10 +741,18 @@ footer .links a:hover { color: var(--text); }
         <div class="tr-eyebrow">Trends</div>
         <h3 class="tr-title">The longer view</h3>
       </div>
+      <div class="tr-controls">
+      <div class="tr-daynav" id="tr-daynav" hidden>
+        <button type="button" class="tr-daystep" data-step="-1" aria-label="Previous day">&#8249;</button>
+        <span class="tr-daylabel" id="tr-daylabel"></span>
+        <button type="button" class="tr-daystep" data-step="1" aria-label="Next day">&#8250;</button>
+      </div>
       <div class="tr-ranges" id="tr-ranges" role="tablist" aria-label="Time range">
+        <button type="button" class="tr-range" data-days="1" id="tr-range-day" hidden>Day</button>
         <button type="button" class="tr-range is-on" data-days="7">Week</button>
         <button type="button" class="tr-range" data-days="30">Month</button>
         <button type="button" class="tr-range" data-days="90">90 days</button>
+      </div>
       </div>
     </div>
     <div class="tr-metrics" id="tr-metrics" role="tablist" aria-label="Metric">
@@ -771,11 +868,11 @@ footer .links a:hover { color: var(--text); }
 
   function ring(fill, size) {
     var r = size / 2 - 5, c = 2 * Math.PI * r, off = c * (1 - fill);
-    var col = fill > 0.5 ? '#a8c45a' : '#e3a94c';
+    var col = fill > 0.5 ? 'var(--gold)' : 'var(--cyan)';
     var cx = size / 2;
     return '<svg class="ring" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' +
-      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" stroke="#2f361d" stroke-width="5"/>' +
-      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="5" stroke-linecap="round"' +
+      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" style="stroke:var(--border)" stroke-width="5"/>' +
+      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" style="stroke:' + col + '" stroke-width="5" stroke-linecap="round"' +
       ' stroke-dasharray="' + c + '" stroke-dashoffset="' + off + '" transform="rotate(-90 ' + cx + ' ' + cx + ')"/>' +
       '</svg>';
   }
@@ -791,7 +888,7 @@ footer .links a:hover { color: var(--text); }
       return x.toFixed(1) + ',' + y.toFixed(1);
     }).join(' ');
     return '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
-      '<polyline fill="none" stroke="#768947" stroke-width="1.5" points="' + pts + '"/></svg>';
+      '<polyline fill="none" style="stroke:var(--gold-dim)" stroke-width="1.5" points="' + pts + '"/></svg>';
   }
 
   function render(d) {
@@ -911,18 +1008,18 @@ footer .links a:hover { color: var(--text); }
   var wrap = $('trends');
   if (!wrap) return;
 
-  // Palette — reuses the site's olive/amber signal colours.
-  var COL = {
-    deep:  '#a8c45a',  // olive (gold)
-    light: '#5f7038',  // deep olive
-    rem:   '#e3a94c',  // amber (cyan)
-    awake: '#3c4525',  // muted
-    line:  '#a8c45a',
-    steps: '#8fa64a',
-    band:  'rgba(168,196,90,0.06)',
-    grid:  '#232818',
-    axis:  '#6f7560'
-  };
+  // Palette — the site's olive/amber signal colours, read from the theme
+  // tokens (--ch-*) so the charts follow the light/dark switch.
+  var COL = {}, BAND_SW, LANE_COL = [];
+  function readPalette() {
+    var cs = getComputedStyle(document.documentElement);
+    ['deep', 'light', 'rem', 'awake', 'line', 'steps', 'band', 'grid', 'axis', 'hi', 'asleep', 'area'].forEach(function (k) {
+      COL[k] = cs.getPropertyValue('--ch-' + k).trim();
+    });
+    BAND_SW = cs.getPropertyValue('--ch-band-sw').trim();
+    LANE_COL = [COL.awake, COL.rem, COL.light, COL.deep];
+  }
+  readPalette();
   var STAGE_LABELS = { deep: 'Deep', light: 'Light', rem: 'REM', awake: 'Awake' };
 
   // Scale (Body Scan) accents — amber, to read apart from the olive watch charts.
@@ -939,7 +1036,7 @@ footer .links a:hover { color: var(--text); }
   };
 
   var NOW = Math.floor(Date.now() / 1000);
-  var state = { data: null, scale: null, metric: 'stages', days: 7 };
+  var state = { data: null, scale: null, intra: null, nights: {}, day: null, metric: 'stages', days: 7 };
 
   // ── geometry ──
   var W = 760, H = 300, PL = 46, PR = 16, PT = 18, PB = 32;
@@ -950,6 +1047,24 @@ footer .links a:hover { color: var(--text); }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
   function yFor(v, top) { return PT + plotH - (Math.max(0, v) / top) * plotH; }
   function commas(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+  // ── intraday helpers ──
+  // Day keys are the owner's local calendar dates (YYYY-MM-DD); clock labels
+  // use the offset the Worker recorded, so every viewer sees the owner's time.
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function hhmm(epoch, off) { var d = new Date((epoch + off) * 1000); return pad2(d.getUTCHours()) + ':' + pad2(d.getUTCMinutes()); }
+  function keyOf(epoch, off) { return new Date((epoch + off) * 1000).toISOString().slice(0, 10); }
+  function fmtKey(key, long) {
+    return new Date(key + 'T12:00:00Z').toLocaleDateString(undefined, long
+      ? { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }
+      : { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  }
+  function intraDay(key) { return state.intra && state.intra.days ? state.intra.days[key] || null : null; }
+  function dayKeys() { return state.intra && state.intra.days ? Object.keys(state.intra.days).sort() : []; }
+  // hours of a sleep-bounded day that fall after the next local midnight
+  function amFlags(e, key) { return e.steps.map(function (_, h) { return keyOf(e.h0 + h * 3600, e.off) > key; }); }
+  // metrics with an hourly / per-night breakdown for the Day range
+  var DAY_OK = { steps: 1, distance: 1, calories: 1, stages: 1, nightHr: 1, resp: 1 };
 
   // ── per-metric config: returns {n, dates[], top, gridLabel(v), rects/line svg, tip(i), legend[]} ──
   // activity metrics are day-indexed; everything else is night-indexed.
@@ -972,10 +1087,10 @@ footer .links a:hover { color: var(--text); }
       legend: cfg.legend
     };
   }
-  var BAND_SW = 'rgba(168,196,90,0.18)';
   function orDash(v, suffix) { return v == null || isNaN(v) ? '—' : v + suffix; }
 
   function buildView(metric, days) {
+    if (days === 1) return dayView(metric);
     // ── scale (Body Scan) — periodic readings, windowed by real time ──
     if (SCALE[metric]) return scaleView(metric, days);
 
@@ -989,14 +1104,8 @@ footer .links a:hover { color: var(--text); }
       if (!st[srcKey]) return null;                 // field absent (e.g. cache mid-refresh)
       var adays = lastN(st.days, days);
       if (!adays.length) return null;
-      if (metric === 'steps') {
-        var v = lastN(st.v, days), topV = niceStep_(maxOf(v));
-        return barView(adays, v, {
-          top: topV, color: COL.steps, band: [7000, 12000],
-          gridLabel: function (x) { return Math.round(x / 100) / 10 + 'k'; },
-          rows: function (i) { return [{ c: COL.steps, k: 'Steps', v: commas(v[i]) }]; },
-          legend: [{ c: COL.steps, t: 'Steps / day' }, { c: BAND_SW, t: 'healthy 7–12k', sq: true }]
-        });
+      if (metric === 'steps' || metric === 'distance') {
+        return segmentedView(metric, adays, lastN(metric === 'steps' ? st.v : st.distance, days));
       }
       if (metric === 'active') {
         var av = lastN(st.active, days);
@@ -1005,15 +1114,6 @@ footer .links a:hover { color: var(--text); }
           gridLabel: function (x) { return Math.round(x) + 'm'; },
           rows: function (i) { return [{ c: COL.rem, k: 'Active', v: orDash(av[i], ' min') }]; },
           legend: [{ c: COL.rem, t: 'Active minutes / day · moderate + intense' }]
-        });
-      }
-      if (metric === 'distance') {
-        var dv = lastN(st.distance, days);
-        return barView(adays, dv, {
-          top: niceUp_(maxOf(dv), 2), color: COL.deep,
-          gridLabel: function (x) { return (Math.round(x * 10) / 10) + ''; },
-          rows: function (i) { return [{ c: COL.deep, k: 'Distance', v: orDash(dv[i], ' km') }]; },
-          legend: [{ c: COL.deep, t: 'Distance / day · km' }]
         });
       }
       var cv = lastN(st.calories, days);  // calories
@@ -1096,6 +1196,186 @@ footer .links a:hover { color: var(--text); }
     });
   }
 
+  // ── steps / distance over days: each bar is the sleep-bounded day total,
+  // built from its hours (earliest at the bottom). Faint rules mark each hour;
+  // hours after midnight that still belong to the day are capped in amber.
+  // Days without intraday data keep Withings' midnight-to-midnight total.
+  function segmentedView(metric, adays, daily) {
+    var isSteps = metric === 'steps', color = isSteps ? COL.steps : COL.deep;
+    var keys = adays.map(function (e) { return new Date(e * 1000).toISOString().slice(0, 10); });
+    var effs = keys.map(intraDay);
+    var vals = daily.map(function (v, i) {
+      var e = effs[i]; if (!e) return v;
+      return isSteps ? e.tot.steps : Math.round(e.tot.dist / 10) / 100;
+    });
+    var segs = effs.map(function (e) {
+      if (!e) return null;
+      return isSteps ? e.steps : e.dist.map(function (m) { return m / 1000; });
+    });
+    var am = effs.map(function (e, i) { return e ? amFlags(e, keys[i]) : null; });
+    var top = isSteps ? niceStep_(maxOf(vals)) : niceUp_(maxOf(vals), 2);
+    var anyAm = am.some(function (f) { return f && f.indexOf(true) !== -1; });
+    var legend = isSteps
+      ? [{ c: COL.steps, t: 'Steps / day' }, { c: BAND_SW, t: 'healthy 7–12k', sq: true }]
+      : [{ c: COL.deep, t: 'Distance / day · km' }];
+    if (effs.some(Boolean)) legend.push({ c: 'repeating-linear-gradient(0deg,' + color + ' 0 3px,rgba(17,20,10,.55) 3px 4px)', t: 'one slice per hour', sq: true });
+    if (anyAm) legend.push({ c: COL.rem, t: 'after midnight, before sleep' });
+    return {
+      n: adays.length, dates: adays, top: top, band: isSteps ? [7000, 12000] : null,
+      gridLabel: isSteps ? function (x) { return Math.round(x / 100) / 10 + 'k'; } : function (x) { return (Math.round(x * 10) / 10) + ''; },
+      draw: segBarSvg(vals, segs, am, top, color),
+      keyAt: function (i) { return effs[i] ? keys[i] : null; },
+      tip: function (i) {
+        var e = effs[i], fmtV = isSteps ? function (x) { return commas(x); } : function (x) { return (Math.round(x * 100) / 100) + ' km'; };
+        var rows = [{ c: color, k: isSteps ? 'Steps' : 'Distance', v: vals[i] == null ? '—' : fmtV(vals[i]), strong: !!e }];
+        if (!e) return { date: fmtDay(adays[i]), rows: rows };
+        if (isSteps && e.cal0 !== e.tot.steps) rows.push({ c: 'transparent', k: 'Midnight count', v: commas(e.cal0) });
+        if (isSteps && e.am) rows.push({ c: COL.rem, k: 'After midnight', v: '+' + commas(e.am) });
+        var peak = 0; e.steps.forEach(function (x, h) { if (x > e.steps[peak]) peak = h; });
+        if (e.steps[peak]) rows.push({ c: 'transparent', k: 'Busiest hour', v: hhmm(e.h0 + peak * 3600, e.off) });
+        rows.push({ c: 'transparent', k: 'Day', v: (e.w ? hhmm(e.w, e.off) : hhmm(e.s, e.off)) + ' → ' + hhmm(e.e, e.off) + (e.st === 'provisional' ? ' ·' : '') });
+        return { date: fmtDay(adays[i]) + (e.st === 'provisional' ? ' · in progress' : '') + ' · click for hours', rows: rows };
+      },
+      legend: legend
+    };
+  }
+
+  // ── Day range: one sleep-bounded day (activity) or one night (sleep) ──
+  function dayView(metric) {
+    if (!DAY_OK[metric] || !state.intra) return null;
+    var key = state.day;
+    if (metric === 'steps' || metric === 'distance' || metric === 'calories') return dayActivityView(metric, key);
+    var night = state.nights[key];
+    if (night === undefined) { loadNight(key); return { loading: true }; }
+    if (!night || !night.seg || !night.seg.length) return null;
+    return metric === 'stages' ? hypnogramView(night) : nightLineView(metric, night);
+  }
+
+  function dayActivityView(metric, key) {
+    var e = intraDay(key); if (!e) return null;
+    var src = metric === 'steps' ? e.steps : metric === 'distance' ? e.dist : e.cal;
+    var am = amFlags(e, key), n = src.length;
+    var hours = src.map(function (_, h) { return e.h0 + h * 3600; });
+    var top = niceUp_(maxOf(src), metric === 'steps' ? 400 : metric === 'distance' ? 200 : 20);   // ÷4 gridlines stay round
+    var unit = metric === 'steps' ? '' : metric === 'distance' ? ' m' : ' kcal';
+    var name = metric === 'steps' ? 'Steps' : metric === 'distance' ? 'Distance' : 'Active kcal';
+    var under = '', cw = plotW / n;
+    // asleep before waking (the day starts at the previous night's onset)
+    if (e.w && e.w > e.h0) {
+      var xw = PL + Math.min(n, (e.w - e.h0) / 3600) * cw;
+      under += '<rect x="' + PL + '" y="' + PT + '" width="' + f(xw - PL) + '" height="' + plotH + '" fill="' + COL.asleep + '"/>' +
+        '<text x="' + f(PL + 6) + '" y="' + (PT + 13) + '" font-size="10" fill="' + COL.axis + '">asleep</text>';
+    }
+    var mi = am.indexOf(true);
+    if (mi > 0) {
+      var xm = PL + mi * cw;
+      under += '<line x1="' + f(xm) + '" y1="' + PT + '" x2="' + f(xm) + '" y2="' + baseY + '" stroke="' + COL.rem + '" stroke-opacity=".55" stroke-dasharray="3 4"/>' +
+        (xm > PL + plotW - 70
+          ? '<text x="' + f(xm - 5) + '" y="' + (PT + 13) + '" text-anchor="end" font-size="10" fill="' + COL.rem + '">midnight</text>'
+          : '<text x="' + f(xm + 5) + '" y="' + (PT + 13) + '" font-size="10" fill="' + COL.rem + '">midnight</text>');
+    }
+    var bars = '';
+    for (var h = 0; h < n; h++) {
+      if (!src[h]) continue;
+      var bg = barGeomN(h, n), y = yFor(src[h], top);
+      bars += '<rect x="' + f(bg.x) + '" y="' + f(y) + '" width="' + f(bg.w) + '" height="' + f(Math.max(0, baseY - y)) + '" rx="1.5" fill="' + (am[h] ? COL.rem : COL.steps) + '"/>';
+    }
+    var cum = [], acc = 0; src.forEach(function (x) { acc += x; cum.push(acc); });
+    var legend = [{ c: COL.steps, t: name + ' / hour' }];
+    if (mi > 0) legend.push({ c: COL.rem, t: 'after midnight, still this day' });
+    if (e.w) legend.push({ c: BAND_SW, t: 'asleep', sq: true });
+    return {
+      n: n, dates: hours, top: top, under: under, draw: bars,
+      gridLabel: metric === 'distance' ? function (x) { return x >= 1000 ? (Math.round(x / 100) / 10) + 'k' : String(Math.round(x)); }
+        : metric === 'steps' ? function (x) { return x >= 1000 ? (Math.round(x / 100) / 10) + 'k' : String(Math.round(x)); }
+        : function (x) { return String(Math.round(x)); },
+      xLabel: function (i) { return hhmm(hours[i], e.off); }, xEvery: n > 26 ? 4 : 3,
+      tip: function (i) {
+        return { date: hhmm(hours[i], e.off) + '–' + hhmm(hours[i] + 3600, e.off) + (am[i] ? ' · after midnight' : ''), rows: [
+          { c: am[i] ? COL.rem : COL.steps, k: name, v: commas(src[i]) + unit },
+          { c: 'transparent', k: 'So far today', v: commas(cum[i]) + unit, strong: true }
+        ] };
+      },
+      legend: legend, day: e, dayKey: key
+    };
+  }
+
+  // sleep stages over the night: Awake (top) → REM → Light → Deep (bottom)
+  var LANE = { 0: 0, 3: 1, 1: 2, 2: 3, 4: 2 };          // state → lane
+  var LANE_NAME = ['Awake', 'REM', 'Light', 'Deep'];
+  var BIN = 300;   // 5-minute bins for hover
+  function nightBins(night) { return Math.max(1, Math.ceil((night.end - night.start) / BIN)); }
+  function valueAt(series, t) {   // nearest sample within 5 min
+    var best = null, bd = 301;
+    for (var i = 0; i < series.length; i++) { var d = Math.abs(series[i][0] - t); if (d < bd) { bd = d; best = series[i][1]; } }
+    return best;
+  }
+  function hypnogramView(night) {
+    var n = nightBins(night), span = night.end - night.start, laneH = plotH / 4;
+    var xOf = function (t) { return PL + Math.max(0, Math.min(1, (t - night.start) / span)) * plotW; };
+    var g = '', stageAt = [];
+    night.seg.forEach(function (sg) {
+      var lane = LANE[sg[2]]; if (lane == null) return;
+      var x1 = xOf(sg[0]), x2 = xOf(sg[1]); if (x2 <= x1) return;
+      g += '<rect x="' + f(x1) + '" y="' + f(PT + lane * laneH + 3) + '" width="' + f(Math.max(0.8, x2 - x1)) + '" height="' + f(laneH - 6) + '" rx="1.5" fill="' + LANE_COL[lane] + '"/>';
+    });
+    for (var i = 0; i < n; i++) {
+      var t = night.start + (i + 0.5) * BIN, st = null;
+      for (var k = 0; k < night.seg.length; k++) if (night.seg[k][0] <= t && t < night.seg[k][1]) { st = night.seg[k][2]; break; }
+      stageAt.push(st);
+    }
+    var yLabels = '';
+    LANE_NAME.forEach(function (nm, L) {
+      yLabels += '<text x="' + (PL - 8) + '" y="' + f(PT + (L + 0.5) * laneH + 3.5) + '" text-anchor="end" font-size="10" fill="' + COL.axis + '">' + nm + '</text>';
+      if (L) yLabels += '<line x1="' + PL + '" y1="' + f(PT + L * laneH) + '" x2="' + (PL + plotW) + '" y2="' + f(PT + L * laneH) + '" stroke="' + COL.grid + '"/>';
+    });
+    return {
+      n: n, dates: [], top: 4, yCustom: yLabels, draw: g,
+      xLabel: function (i) { return hhmm(night.start + i * BIN, night.off); }, xEvery: Math.max(1, Math.round(3600 / BIN)),
+      tip: function (i) {
+        var t = night.start + (i + 0.5) * BIN, st = stageAt[i], rows = [];
+        rows.push({ c: st == null ? 'transparent' : LANE_COL[LANE[st]], k: 'Stage', v: st == null ? '—' : LANE_NAME[LANE[st]] });
+        var hr = valueAt(night.hr || [], t); if (hr != null) rows.push({ c: 'transparent', k: 'Heart rate', v: hr + ' bpm' });
+        var rr = valueAt(night.rr || [], t); if (rr != null) rows.push({ c: 'transparent', k: 'Resp rate', v: rr + ' br/min' });
+        return { date: hhmm(night.start + i * BIN, night.off) + '–' + hhmm(night.start + (i + 1) * BIN, night.off), rows: rows };
+      },
+      legend: LANE_NAME.map(function (nm, L) { return { c: LANE_COL[L], t: nm }; }), night: night
+    };
+  }
+  function nightLineView(metric, night) {
+    var series = metric === 'nightHr' ? night.hr : night.rr;
+    if (!series || !series.length) return null;
+    var n = nightBins(night), sums = new Array(n).fill(0), cnt = new Array(n).fill(0);
+    series.forEach(function (p) {
+      var i = Math.floor((p[0] - night.start) / BIN); if (i < 0 || i >= n || p[1] == null) return;
+      sums[i] += p[1]; cnt[i]++;
+    });
+    var vals = sums.map(function (sm, i) { return cnt[i] ? Math.round(sm / cnt[i] * 10) / 10 : null; });
+    var isHr = metric === 'nightHr', band = isHr ? [40, 65] : [12, 20];
+    return {
+      n: n, dates: [], top: niceUp_(maxOf(vals), isHr ? 10 : 5), band: band,
+      gridLabel: function (x) { return String(Math.round(x)); },
+      draw: lineSvg(vals, niceUp_(maxOf(vals), isHr ? 10 : 5), null, null, n > 40),
+      xLabel: function (i) { return hhmm(night.start + i * BIN, night.off); }, xEvery: Math.max(1, Math.round(3600 / BIN)),
+      tip: function (i) {
+        return { date: hhmm(night.start + i * BIN, night.off) + '–' + hhmm(night.start + (i + 1) * BIN, night.off),
+          rows: [{ c: COL.line, k: isHr ? 'Heart rate' : 'Resp rate', v: vals[i] == null ? '—' : vals[i] + (isHr ? ' bpm' : ' br/min') }] };
+      },
+      legend: [{ c: COL.line, t: isHr ? 'Heart rate · 5-min avg' : 'Respiratory rate · 5-min avg' }, { c: BAND_SW, t: 'healthy ' + band[0] + '–' + band[1], sq: true }],
+      night: night
+    };
+  }
+  function loadNight(key) {
+    if (state.nights[key] !== undefined || !key) return;
+    if (state.loadingNight === key) return;
+    state.loadingNight = key;
+    fetch(ENDPOINT + '?intraday=1&day=' + encodeURIComponent(key), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { state.nights[key] = d && d.ok ? d.night : null; })
+      .catch(function () { state.nights[key] = null; })
+      .then(function () { state.loadingNight = null; if (state.days === 1 && state.day === key) render(); });
+  }
+
   // ── scale (Body Scan) view: line + dots + healthy band, amber-tinted ──
   // Body scans are periodic (not daily), so we window by actual timestamp and
   // plot the readings in sequence — a lightweight trend line over the range.
@@ -1148,6 +1428,26 @@ footer .links a:hover { color: var(--text); }
     }
     return g;
   }
+  // bar = day total; hour slices stacked chronologically inside it
+  function segBarSvg(vals, segs, am, top, color) {
+    var g = '', n = vals.length;
+    for (var i = 0; i < n; i++) {
+      var v = vals[i]; if (v == null || isNaN(v)) continue;
+      var bg = barGeomN(i, n), y = yFor(v, top);
+      g += '<rect x="' + f(bg.x) + '" y="' + f(y) + '" width="' + f(bg.w) + '" height="' + f(Math.max(0, baseY - y)) + '" rx="1.5" fill="' + color + '"/>';
+      var sg = segs[i]; if (!sg || !v || bg.w < 3) continue;
+      var acc = 0, k = 0;
+      for (var h = 0; h < sg.length; h++) {
+        if (!sg[h]) continue;
+        var y0 = yFor(acc, top); acc += sg[h]; var y1 = yFor(Math.min(acc, v), top);
+        if (am[i] && am[i][h]) g += '<rect x="' + f(bg.x) + '" y="' + f(y1) + '" width="' + f(bg.w) + '" height="' + f(Math.max(0, y0 - y1)) + '" fill="' + COL.rem + '" fill-opacity=".85"/>';
+        else if (k % 2) g += '<rect x="' + f(bg.x) + '" y="' + f(y1) + '" width="' + f(bg.w) + '" height="' + f(Math.max(0, y0 - y1)) + '" fill="rgba(17,20,10,0.06)"/>';
+        k++;
+        if (acc < v - 1e-6 && y0 - y1 >= 1.2) g += '<line x1="' + f(bg.x) + '" y1="' + f(y1) + '" x2="' + f(bg.x + bg.w) + '" y2="' + f(y1) + '" stroke="rgba(17,20,10,0.30)" stroke-width="0.6"/>';
+      }
+    }
+    return g;
+  }
   function stackSvg(n, layers, top) {
     var g = '';
     for (var i = 0; i < n; i++) {
@@ -1162,9 +1462,9 @@ footer .links a:hover { color: var(--text); }
     }
     return g;
   }
-  function lineSvg(vals, top, color, areaFill) {
+  function lineSvg(vals, top, color, areaFill, noDots) {
     color = color || COL.line;
-    areaFill = areaFill || 'rgba(168,196,90,0.10)';
+    areaFill = areaFill || COL.area;
     var pts = [], areaPts = [], n = vals.length, first = null, last = null;
     for (var i = 0; i < n; i++) {
       if (vals[i] == null || isNaN(vals[i])) continue;
@@ -1175,7 +1475,7 @@ footer .links a:hover { color: var(--text); }
     }
     if (!pts.length) return '';
     var dots = '';
-    areaPts.forEach(function (p) { dots += '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="2.4" fill="' + color + '"/>'; });
+    if (!noDots) areaPts.forEach(function (p) { dots += '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="2.4" fill="' + color + '"/>'; });
     var area = '<polygon points="' + f(first) + ',' + f(baseY) + ' ' + pts.join(' ') + ' ' + f(last) + ',' + f(baseY) +
                '" fill="' + areaFill + '"/>';
     return area + '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' + dots;
@@ -1194,31 +1494,40 @@ footer .links a:hover { color: var(--text); }
       var y1 = yFor(Math.min(view.band[1], view.top), view.top), y2 = yFor(view.band[0], view.top);
       g += '<rect x="' + PL + '" y="' + f(y1) + '" width="' + plotW + '" height="' + f(y2 - y1) + '" fill="' + (view.bandColor || COL.band) + '"/>';
     }
-    // gridlines + y labels
-    for (var i = 0; i <= G; i++) {
+    // gridlines + y labels (hypnogram supplies its own lane labels)
+    if (view.yCustom) g += view.yCustom;
+    else for (var i = 0; i <= G; i++) {
       var val = view.top * i / G, y = yFor(val, view.top);
       g += '<line x1="' + PL + '" y1="' + f(y) + '" x2="' + (PL + plotW) + '" y2="' + f(y) + '" stroke="' + COL.grid + '" stroke-width="1"/>';
       g += '<text x="' + (PL - 8) + '" y="' + f(y + 3.5) + '" text-anchor="end" font-size="10" fill="' + COL.axis + '">' + esc(view.gridLabel(val)) + '</text>';
     }
     // x labels (~5 evenly spaced)
-    var n = view.n, stepEvery = Math.max(1, Math.ceil(n / 5));
+    var n = view.n, stepEvery = view.xEvery || Math.max(1, Math.ceil(n / 5));
     for (var j = 0; j < n; j += stepEvery) {
-      var cx = PL + (j + 0.5) * (plotW / n);
-      g += '<text x="' + f(cx) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="' + COL.axis + '">' + esc(fmtDay(view.dates[j])) + '</text>';
+      // clock labels sit on the hour boundary; day labels centre on the bar
+      var cx = view.xLabel ? PL + j * (plotW / n) : PL + (j + 0.5) * (plotW / n);
+      g += '<text x="' + f(cx) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="' + COL.axis + '">' +
+        esc(view.xLabel ? view.xLabel(j) : fmtDay(view.dates[j])) + '</text>';
     }
-    return g;
+    return g + (view.under || '');
   }
 
   function render() {
+    syncDayUi();
     var view = buildView(state.metric, state.days);
     var chart = $('tr-chart'), legend = $('tr-legend'), cap = $('tr-caption');
-    if (!view) {
-      chart.innerHTML = '<text x="' + (W / 2) + '" y="' + (H / 2) + '" text-anchor="middle" font-size="13" fill="' + COL.axis + '" class="tr-empty">No readings in this window yet.</text>';
+    $('tr-chartwrap').classList.toggle('is-clickable', !!(view && view.keyAt));
+    if (!view || view.loading) {
+      var msg = view ? 'Loading the night…' : state.days === 1
+        ? (state.metric === 'stages' ? 'No sleep detail recorded for this night.'
+          : SLEEP_DAY[state.metric] ? 'The watch didn\u2019t record this overnight signal for this night.' : 'No hourly readings for this day.')
+        : 'No readings in this window yet.';
+      chart.innerHTML = '<text x="' + (W / 2) + '" y="' + (H / 2) + '" text-anchor="middle" font-size="13" fill="' + COL.axis + '" class="tr-empty">' + msg + '</text>';
       legend.innerHTML = ''; cap.textContent = ''; state.view = null; return;
     }
     state.view = view;
     chart.innerHTML = chrome(view) +
-      '<rect id="tr-hi" x="0" y="' + PT + '" width="0" height="' + plotH + '" fill="rgba(242,239,226,0.05)" visibility="hidden"/>' +
+      '<rect id="tr-hi" x="0" y="' + PT + '" width="0" height="' + plotH + '" fill="' + COL.hi + '" visibility="hidden"/>' +
       view.draw;
     legend.innerHTML = view.legend.map(function (l) {
       return '<span class="lg"><span class="lg-sw" style="background:' + l.c + (l.sq ? ';border-radius:2px' : '') + '"></span>' + esc(l.t) + '</span>';
@@ -1233,14 +1542,64 @@ footer .links a:hover { color: var(--text); }
       hydration: 'body-water percentage', visceralFat: 'visceral-fat index',
       vo2max: 'estimated VO₂ max', restingHr: 'resting heart rate'
     };
+    if (state.days === 1) { cap.textContent = dayCaption(view); return; }
     var isScale = !!SCALE[state.metric], isAct = !!ACT[state.metric];
     var noun = isScale ? 'days' : (isAct ? 'days' : 'nights');
     var win = 'Last ' + state.days + ' ' + noun;
     var source = isScale ? 'Body Scan' : 'ScanWatch 2';
     var caveat = isScale ? ' (periodic scale readings — spaced as measured, not one per day)'
       : (isAct ? ' (running daily totals — they trail the app until the next sync)' : '');
+    if ((state.metric === 'steps' || state.metric === 'distance') && state.intra)
+      caveat = ' · days run wake → sleep, not midnight → midnight; click a bar for its hours';
     cap.textContent = win + ' · ' + DESC[state.metric] + ' · ' + source + caveat +
       ' · showing ' + view.n + ' with data';
+  }
+
+  var SLEEP_DAY = { stages: 1, nightHr: 1, resp: 1 };
+  function dayCaption(view) {
+    if (view.night) {
+      var nt = view.night, hrs = Math.round((nt.end - nt.start) / 360) / 10;
+      return 'Night ending ' + fmtKey(state.day, true) + ' · in bed ' + hhmm(nt.start, nt.off) + ' → ' + hhmm(nt.end, nt.off) +
+        ' (' + hrs + 'h) · ScanWatch 2 · hover for stage, heart rate and breathing';
+    }
+    var e = view.day; if (!e) return '';
+    var from = e.w ? 'woke ' + hhmm(e.w, e.off) : 'from ' + hhmm(e.s, e.off) + ' (no sleep recorded)';
+    var to = e.st === 'final' ? 'slept ' + hhmm(e.e, e.off) : e.st === 'fallback' ? 'cut at ' + hhmm(e.e, e.off) + ' (no sleep recorded)' : 'still in progress';
+    var t = state.metric === 'steps' ? commas(e.tot.steps) + ' steps'
+      : state.metric === 'distance' ? (Math.round(e.tot.dist / 10) / 100) + ' km' : commas(e.tot.cal) + ' active kcal';
+    var extra = state.metric === 'steps' && e.am ? ' · Withings counts ' + commas(e.cal0) + ' (midnight reset) — +' + commas(e.am) + ' after midnight credited here' : '';
+    return fmtKey(state.day, true) + ' · ' + from + ' → ' + to + ' · ' + t + extra + (e.partial ? ' · next day not synced yet' : '');
+  }
+
+  // Day range chrome: navigator label/arrows, and dim metrics without an hourly view.
+  function syncDayUi() {
+    var isDay = state.days === 1, keys = dayKeys(), idx = keys.indexOf(state.day);
+    $('tr-daynav').hidden = !isDay;
+    if (isDay) {
+      $('tr-daylabel').textContent = state.day ? fmtKey(state.day, true) : '—';
+      $('tr-daynav').querySelector('[data-step="-1"]').disabled = idx <= 0;
+      $('tr-daynav').querySelector('[data-step="1"]').disabled = idx === -1 || idx >= keys.length - 1;
+    }
+    $('tr-metrics').querySelectorAll('.tr-metric').forEach(function (b) {
+      b.classList.toggle('is-na', isDay && !DAY_OK[b.dataset.metric]);
+    });
+  }
+  function setRange(days) {
+    state.days = days;
+    var btn = $('tr-ranges').querySelector('[data-days="' + days + '"]');
+    if (btn) setOn($('tr-ranges'), btn, 'tr-range');
+  }
+  function setMetric(metric) {
+    state.metric = metric;
+    var btn = $('tr-metrics').querySelector('[data-metric="' + metric + '"]');
+    if (btn) setOn($('tr-metrics'), btn, 'tr-metric');
+  }
+  function chartIndex(e) {
+    var view = state.view; if (!view) return -1;
+    var box = $('tr-chartwrap').getBoundingClientRect(), mx = (e.clientX - box.left) / (box.width / W);
+    if (mx < PL || mx > PL + plotW) return -1;
+    var i = Math.floor((mx - PL) / (plotW / view.n));
+    return i >= 0 && i < view.n ? i : -1;
   }
 
   // ── hover tooltip ──
@@ -1248,10 +1607,9 @@ footer .links a:hover { color: var(--text); }
     var view = state.view; if (!view) return;
     var box = $('tr-chartwrap').getBoundingClientRect();
     var scale = box.width / W;
-    var mxSvg = (e.clientX - box.left) / scale;
-    var i = Math.floor((mxSvg - PL) / (plotW / view.n));
+    var i = chartIndex(e);
     var tip = $('tr-tip'), hi = $('tr-hi');
-    if (i < 0 || i >= view.n || mxSvg < PL || mxSvg > PL + plotW) { tip.hidden = true; if (hi) hi.setAttribute('visibility', 'hidden'); return; }
+    if (i === -1) { tip.hidden = true; if (hi) hi.setAttribute('visibility', 'hidden'); return; }
     var cw = plotW / view.n, cx = PL + (i + 0.5) * cw;
     if (hi) { hi.setAttribute('x', f(PL + i * cw)); hi.setAttribute('width', f(cw)); hi.setAttribute('visibility', 'visible'); }
     var t = view.tip(i);
@@ -1268,15 +1626,30 @@ footer .links a:hover { color: var(--text); }
   function bind() {
     $('tr-ranges').addEventListener('click', function (e) {
       var b = e.target.closest('.tr-range'); if (!b) return;
-      state.days = Number(b.dataset.days);
-      setOn($('tr-ranges'), b, 'tr-range'); render();
+      setRange(Number(b.dataset.days));
+      if (state.days === 1) {
+        if (!DAY_OK[state.metric]) setMetric('steps');
+        if (!state.day) { var k = dayKeys(); state.day = k[k.length - 1] || null; }
+      }
+      onLeave(); render();
     });
     $('tr-metrics').addEventListener('click', function (e) {
       var b = e.target.closest('.tr-metric'); if (!b) return;
-      state.metric = b.dataset.metric;
-      setOn($('tr-metrics'), b, 'tr-metric'); render();
+      if (state.days === 1 && !DAY_OK[b.dataset.metric]) setRange(7);   // no hourly view → back to Week
+      setMetric(b.dataset.metric); onLeave(); render();
+    });
+    $('tr-daynav').addEventListener('click', function (e) {
+      var b = e.target.closest('.tr-daystep'); if (!b || b.disabled) return;
+      var keys = dayKeys(), i = keys.indexOf(state.day) + Number(b.dataset.step);
+      if (i >= 0 && i < keys.length) { state.day = keys[i]; onLeave(); render(); }
     });
     var cw = $('tr-chartwrap');
+    cw.addEventListener('click', function (e) {   // drill a day bar down to its hours
+      var view = state.view; if (!view || !view.keyAt) return;
+      var i = chartIndex(e), key = i === -1 ? null : view.keyAt(i);
+      if (!key) return;
+      state.day = key; setRange(1); onLeave(); render();
+    });
     cw.addEventListener('mousemove', onMove);
     cw.addEventListener('mouseleave', onLeave);
     cw.addEventListener('touchmove', function (e) { if (e.touches[0]) onMove(e.touches[0]); }, { passive: true });
@@ -1311,9 +1684,12 @@ footer .links a:hover { color: var(--text); }
   function load() {
     Promise.all([
       fetch(ENDPOINT + '?trends=1', { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
-      fetch(ENDPOINT, { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; })
+      fetch(ENDPOINT, { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
+      fetch(ENDPOINT + '?intraday=1', { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; })
     ]).then(function (res) {
-      var t = res[0], snap = res[1];
+      var t = res[0], snap = res[1], intra = res[2];
+      state.intra = (intra && intra.ok && intra.days && Object.keys(intra.days).length) ? intra : null;
+      if (state.intra) { var k = dayKeys(); state.day = k[k.length - 1]; $('tr-range-day').hidden = false; }
       state.data = (t && t.ok && t.sleep && t.sleep.days && t.sleep.days.length) ? t : null;
       state.scale = (snap && snap.ok && snap.metrics) ? snap : null;
       if (!initChips()) return;   // no metrics on either sensor → stay hidden
@@ -1322,6 +1698,12 @@ footer .links a:hover { color: var(--text); }
       render();
     });
   }
+
+  // theme switch → re-read the palette and redraw whatever is on screen
+  window.addEventListener('sc-themechange', function () {
+    readPalette();
+    if (!wrap.hidden) { onLeave(); render(); }
+  });
 
   var started = false;
   function begin() { if (started) return; started = true; load(); }
@@ -1406,7 +1788,7 @@ footer .links a:hover { color: var(--text); }
     btn.setAttribute("aria-busy", loading ? "true" : "false");
     if (label) label.textContent = loading ? "Sending…" : labelText;
   }
-  function showError(msg) { statusEl.style.color = "#ef6b6b"; statusEl.textContent = msg; }
+  function showError(msg) { statusEl.style.color = "var(--danger)"; statusEl.textContent = msg; }
   function showSuccess() {
     statusEl.textContent = ""; form.hidden = true;
     if (success) { success.hidden = false; success.scrollIntoView({ behavior: "smooth", block: "center" }); }

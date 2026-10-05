@@ -85,3 +85,47 @@ Script until DNS cutover).
 
 - [ ] Write up each self-study card (replace "write-up coming" links)
 - [ ] Add a longitudinal chart (lipid panels / body comp) when data is ready
+
+## Intraday steps (sleep-bounded days)
+
+Withings resets daily steps at local midnight. The Worker instead pulls
+high-frequency samples (`getintradayactivity`, ~1–2 min) and cuts days at
+**sleep onset** (fallback 04:00 local when no sleep is recorded), so a walk home
+at 00:40 counts toward the day you were still awake in.
+
+- Hourly cron (`17 * * * *`) re-pulls the last 3 days, backfills 8 older days per
+  run (90-day window), fetches night stages/HR, rebuilds the KV `intraday` summary
+  and pre-warms `snapshot`/`trends`. Last run status: `GET /api/health` → `sync`.
+- `GET /api/vitals?intraday=1` summary · `&day=YYYY-MM-DD` one day + its night ·
+  `?intraday=refresh` sync now (throttled) · `?intraday=probe` raw sample peek.
+- Site: **Day** range (hourly bars, hypnogram, overnight HR); Week/Month step and
+  distance bars are stacked hour slices with after-midnight hours in amber.
+
+### Withings re-authorisation
+
+If data goes stale and `/api/vitals?intraday=probe` reports
+`invalid refresh_token`, open `/api/withings/auth?key=<ADMIN_KEY>` and approve.
+`ADMIN_KEY` is a Worker secret (owner copy: `~/.config/health-sankhacooray/admin-key`,
+never in this repo — the Worker serves the repo root as static assets). The
+callback `https://health.sankhacooray.com/api/withings/callback` is registered in
+the Withings developer app.
+
+### Deploying safely
+
+Upload a version without routing traffic, check its preview URL, then promote:
+
+```
+npx wrangler versions upload --message "…"      # prints a preview URL
+npx wrangler versions deploy <version-id>@100% --yes
+npx wrangler rollback <previous-version-id>     # instant undo
+```
+
+Avoid `wrangler secret put` (it deploys the latest version) — use
+`wrangler versions secret put`.
+
+## Theme
+
+Light/dark switch in the app bar. Dark is the default look; the choice is saved
+in `localStorage` (`vitals-theme`), otherwise the OS preference applies. Colours
+are CSS tokens; the light palette overrides them under `:root[data-theme="light"]`
+and charts read their `--ch-*` tokens, redrawing on switch.

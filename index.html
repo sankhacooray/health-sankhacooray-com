@@ -34,6 +34,15 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+<script>
+// Theme: saved choice, else the OS preference. Applied before CSS paints.
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('vitals-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <style>
 :root {
   --bg: #0e120a;
@@ -50,9 +59,45 @@
   --cyan: #e3a94c;        /* amber */
   --cyan-dim: #a87d33;
   --cyan-soft: rgba(227,169,76,0.08);
+  --gold-tint: rgba(168,196,90,0.12);
+  --header-bg: rgba(14,18,10,0.7);
+  --shadow: 0 8px 24px rgba(0,0,0,0.45);
+  --danger: #ef6b6b;
+  /* chart palette (read by the trends script) */
+  --ch-deep: #a8c45a; --ch-light: #5f7038; --ch-rem: #e3a94c; --ch-awake: #3c4525;
+  --ch-line: #a8c45a; --ch-steps: #8fa64a; --ch-band: rgba(168,196,90,0.06);
+  --ch-band-sw: rgba(168,196,90,0.18); --ch-grid: #232818; --ch-axis: #6f7560;
+  --ch-hi: rgba(242,239,226,0.05); --ch-asleep: rgba(95,112,56,0.10); --ch-area: rgba(168,196,90,0.10);
+  color-scheme: dark;
   --radius: 12px;
   --radius-sm: 8px;
   --maxw: 1080px;
+}
+/* Light theme — warm paper, same olive/amber signal colours, deepened for contrast. */
+:root[data-theme="light"] {
+  --bg: #f5f3ea;
+  --surface: #fdfcf7;
+  --surface2: #eeede2;
+  --border: #d6d9c6;
+  --border-soft: #e4e6d7;
+  --text: #1c2013;
+  --text-dim: #4c5340;
+  --text-muted: #7a806d;
+  --gold: #5c771c;
+  --gold-dim: #8aa04a;
+  --gold-soft: rgba(92,119,28,0.10);
+  --cyan: #a8661a;
+  --cyan-dim: #c88f3c;
+  --cyan-soft: rgba(168,102,26,0.10);
+  --gold-tint: rgba(92,119,28,0.12);
+  --header-bg: rgba(245,243,234,0.8);
+  --shadow: 0 8px 24px rgba(60,64,40,0.16);
+  --danger: #c23b3b;
+  --ch-deep: #7d9933; --ch-light: #bccb92; --ch-rem: #d99a3a; --ch-awake: #ddd8c4;
+  --ch-line: #6b8628; --ch-steps: #8ba443; --ch-band: rgba(107,134,40,0.08);
+  --ch-band-sw: rgba(107,134,40,0.22); --ch-grid: #e2e4d4; --ch-axis: #848a76;
+  --ch-hi: rgba(28,32,19,0.05); --ch-asleep: rgba(107,134,40,0.12); --ch-area: rgba(107,134,40,0.10);
+  color-scheme: light;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -76,7 +121,7 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-.site-header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(14,18,10,0.7); border-bottom: 1px solid var(--border-soft); }
+.site-header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: var(--header-bg); border-bottom: 1px solid var(--border-soft); }
 .site-header .inner { max-width: var(--maxw); margin: 0 auto; padding: 18px 28px; display: flex; align-items: center; gap: 32px; }
 .brand { display: flex; align-items: baseline; gap: 10px; }
 .brand-mark { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--gold); letter-spacing: -0.5px; }
@@ -84,6 +129,14 @@ a { color: inherit; text-decoration: none; }
 .nav { margin-left: auto; display: flex; gap: 24px; font-size: 14px; color: var(--text-dim); }
 .nav a:hover { color: var(--text); }
 @media (max-width: 640px) { .nav { display: none; } }
+.theme-btn { flex-shrink: 0; width: 36px; height: 36px; display: grid; place-items: center; margin-left: -8px; color: var(--text-dim); background: transparent; border: 1px solid var(--border-soft); border-radius: 999px; cursor: pointer; transition: color .16s ease, background .16s ease, border-color .16s ease; }
+.theme-btn:hover { color: var(--gold); background: var(--gold-soft); border-color: var(--gold-dim); }
+.theme-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.theme-btn svg { width: 17px; height: 17px; }
+/* show the icon for the theme you'd switch TO */
+.theme-btn .i-sun, :root[data-theme="light"] .theme-btn .i-moon { display: block; }
+.theme-btn .i-moon, :root[data-theme="light"] .theme-btn .i-sun { display: none; }
+@media (max-width: 640px) { .theme-btn { margin-left: auto; } }
 
 .hero { max-width: var(--maxw); margin: 0 auto; padding: 120px 28px 80px; }
 .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; }
@@ -114,8 +167,8 @@ a { color: inherit; text-decoration: none; }
 .proto .desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
 
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-.card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 22px; transition: border-color 0.2s, transform 0.2s; }
-.card:hover { border-color: var(--border); transform: translateY(-2px); }
+.card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 22px; transition: border-color 0.2s, background 0.2s; }
+.card:hover { border-color: var(--gold-dim); }
 .card .role { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
 .card .role.cool { color: var(--cyan); }
 .card h3 { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; margin-bottom: 6px; letter-spacing: -0.2px; }
@@ -227,7 +280,7 @@ footer .links a:hover { color: var(--text); }
 
 /* research consent / invitation card */
 .consent-card { display: flex; gap: 18px; align-items: flex-start; margin-top: 30px; background: var(--gold-soft); border: 1px solid var(--gold-dim); border-radius: var(--radius); padding: 24px; }
-.consent-card .cicon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: rgba(168,196,90,0.12); color: var(--gold); }
+.consent-card .cicon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: var(--gold-tint); color: var(--gold); }
 .consent-card .ctag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 7px; }
 .consent-card h3 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 24px; line-height: 1.2; color: var(--text); margin: 0 0 10px; }
 .consent-card p { font-size: 14px; color: var(--text-dim); line-height: 1.65; margin: 0; max-width: 640px; }
@@ -280,7 +333,7 @@ footer .links a:hover { color: var(--text); }
 .tr-chartwrap { position: relative; margin-top: 24px; }
 .tr-chart { width: 100%; height: auto; display: block; overflow: visible; }
 .tr-chart text { font-family: 'JetBrains Mono', monospace; }
-.tr-tip { position: absolute; pointer-events: none; z-index: 5; top: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12px; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,0.45); min-width: 128px; transform: translateX(-50%); }
+.tr-tip { position: absolute; pointer-events: none; z-index: 5; top: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12px; color: var(--text); box-shadow: var(--shadow); min-width: 128px; transform: translateX(-50%); }
 .tr-tip[hidden] { display: none; }
 .tr-tip .tt-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
 .tr-tip .tt-row { display: flex; align-items: center; gap: 7px; line-height: 1.55; white-space: nowrap; }
@@ -319,7 +372,7 @@ footer .links a:hover { color: var(--text); }
 .cf-spinner { display: none; width: 15px; height: 15px; border: 2px solid rgba(0,0,0,.3); border-top-color: var(--bg); border-radius: 50%; animation: cf-spin .7s linear infinite; }
 .cf-submit.is-loading .cf-spinner { display: inline-block; }
 @keyframes cf-spin { to { transform: rotate(360deg); } }
-.cf-status { min-height: 20px; margin: 14px 0 0; font-size: 14px; color: #ef6b6b; }
+.cf-status { min-height: 20px; margin: 14px 0 0; font-size: 14px; color: var(--danger); }
 .cf-success { text-align: center; padding: 16px 0; }
 .cf-success[hidden] { display: none; }
 .cf-check { width: 56px; height: 56px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 50%; background: var(--gold-soft); color: var(--gold); }
@@ -346,8 +399,33 @@ footer .links a:hover { color: var(--text); }
       <a href="#live">live</a>
       <a href="#contact">contact</a>
     </nav>
+    <button type="button" class="theme-btn" id="theme-btn" aria-label="Switch to light theme" title="Switch to light theme">
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
   </div>
 </header>
+<script>
+// Single switch: flips data-theme, remembers it, tells charts + shared footer.
+(function () {
+  var root = document.documentElement, btn = document.getElementById('theme-btn');
+  var meta = document.querySelector('meta[name="theme-color"]');
+  function sync() {
+    var light = root.getAttribute('data-theme') === 'light';
+    var label = light ? 'Switch to dark theme' : 'Switch to light theme';
+    btn.setAttribute('aria-label', label); btn.title = label;
+    if (meta) meta.setAttribute('content', light ? '#f5f3ea' : '#0e120a');
+  }
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('vitals-theme', next); } catch (e) {}
+    sync();
+    try { window.dispatchEvent(new Event('sc-themechange')); } catch (e) {}
+  });
+  sync();
+})();
+</script>
 
 <section class="hero">
   <div class="eyebrow">nutrition · fasting · metabolism</div>
@@ -790,11 +868,11 @@ footer .links a:hover { color: var(--text); }
 
   function ring(fill, size) {
     var r = size / 2 - 5, c = 2 * Math.PI * r, off = c * (1 - fill);
-    var col = fill > 0.5 ? '#a8c45a' : '#e3a94c';
+    var col = fill > 0.5 ? 'var(--gold)' : 'var(--cyan)';
     var cx = size / 2;
     return '<svg class="ring" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' +
-      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" stroke="#2f361d" stroke-width="5"/>' +
-      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="5" stroke-linecap="round"' +
+      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" style="stroke:var(--border)" stroke-width="5"/>' +
+      '<circle cx="' + cx + '" cy="' + cx + '" r="' + r + '" fill="none" style="stroke:' + col + '" stroke-width="5" stroke-linecap="round"' +
       ' stroke-dasharray="' + c + '" stroke-dashoffset="' + off + '" transform="rotate(-90 ' + cx + ' ' + cx + ')"/>' +
       '</svg>';
   }
@@ -810,7 +888,7 @@ footer .links a:hover { color: var(--text); }
       return x.toFixed(1) + ',' + y.toFixed(1);
     }).join(' ');
     return '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
-      '<polyline fill="none" stroke="#768947" stroke-width="1.5" points="' + pts + '"/></svg>';
+      '<polyline fill="none" style="stroke:var(--gold-dim)" stroke-width="1.5" points="' + pts + '"/></svg>';
   }
 
   function render(d) {
@@ -930,18 +1008,18 @@ footer .links a:hover { color: var(--text); }
   var wrap = $('trends');
   if (!wrap) return;
 
-  // Palette — reuses the site's olive/amber signal colours.
-  var COL = {
-    deep:  '#a8c45a',  // olive (gold)
-    light: '#5f7038',  // deep olive
-    rem:   '#e3a94c',  // amber (cyan)
-    awake: '#3c4525',  // muted
-    line:  '#a8c45a',
-    steps: '#8fa64a',
-    band:  'rgba(168,196,90,0.06)',
-    grid:  '#232818',
-    axis:  '#6f7560'
-  };
+  // Palette — the site's olive/amber signal colours, read from the theme
+  // tokens (--ch-*) so the charts follow the light/dark switch.
+  var COL = {}, BAND_SW, LANE_COL = [];
+  function readPalette() {
+    var cs = getComputedStyle(document.documentElement);
+    ['deep', 'light', 'rem', 'awake', 'line', 'steps', 'band', 'grid', 'axis', 'hi', 'asleep', 'area'].forEach(function (k) {
+      COL[k] = cs.getPropertyValue('--ch-' + k).trim();
+    });
+    BAND_SW = cs.getPropertyValue('--ch-band-sw').trim();
+    LANE_COL = [COL.awake, COL.rem, COL.light, COL.deep];
+  }
+  readPalette();
   var STAGE_LABELS = { deep: 'Deep', light: 'Light', rem: 'REM', awake: 'Awake' };
 
   // Scale (Body Scan) accents — amber, to read apart from the olive watch charts.
@@ -1009,7 +1087,6 @@ footer .links a:hover { color: var(--text); }
       legend: cfg.legend
     };
   }
-  var BAND_SW = 'rgba(168,196,90,0.18)';
   function orDash(v, suffix) { return v == null || isNaN(v) ? '—' : v + suffix; }
 
   function buildView(metric, days) {
@@ -1186,7 +1263,7 @@ footer .links a:hover { color: var(--text); }
     // asleep before waking (the day starts at the previous night's onset)
     if (e.w && e.w > e.h0) {
       var xw = PL + Math.min(n, (e.w - e.h0) / 3600) * cw;
-      under += '<rect x="' + PL + '" y="' + PT + '" width="' + f(xw - PL) + '" height="' + plotH + '" fill="rgba(95,112,56,0.10)"/>' +
+      under += '<rect x="' + PL + '" y="' + PT + '" width="' + f(xw - PL) + '" height="' + plotH + '" fill="' + COL.asleep + '"/>' +
         '<text x="' + f(PL + 6) + '" y="' + (PT + 13) + '" font-size="10" fill="' + COL.axis + '">asleep</text>';
     }
     var mi = am.indexOf(true);
@@ -1206,7 +1283,7 @@ footer .links a:hover { color: var(--text); }
     var cum = [], acc = 0; src.forEach(function (x) { acc += x; cum.push(acc); });
     var legend = [{ c: COL.steps, t: name + ' / hour' }];
     if (mi > 0) legend.push({ c: COL.rem, t: 'after midnight, still this day' });
-    if (e.w) legend.push({ c: 'rgba(95,112,56,0.35)', t: 'asleep', sq: true });
+    if (e.w) legend.push({ c: BAND_SW, t: 'asleep', sq: true });
     return {
       n: n, dates: hours, top: top, under: under, draw: bars,
       gridLabel: metric === 'distance' ? function (x) { return x >= 1000 ? (Math.round(x / 100) / 10) + 'k' : String(Math.round(x)); }
@@ -1225,7 +1302,6 @@ footer .links a:hover { color: var(--text); }
 
   // sleep stages over the night: Awake (top) → REM → Light → Deep (bottom)
   var LANE = { 0: 0, 3: 1, 1: 2, 2: 3, 4: 2 };          // state → lane
-  var LANE_COL = [COL.awake, COL.rem, COL.light, COL.deep];
   var LANE_NAME = ['Awake', 'REM', 'Light', 'Deep'];
   var BIN = 300;   // 5-minute bins for hover
   function nightBins(night) { return Math.max(1, Math.ceil((night.end - night.start) / BIN)); }
@@ -1388,7 +1464,7 @@ footer .links a:hover { color: var(--text); }
   }
   function lineSvg(vals, top, color, areaFill, noDots) {
     color = color || COL.line;
-    areaFill = areaFill || 'rgba(168,196,90,0.10)';
+    areaFill = areaFill || COL.area;
     var pts = [], areaPts = [], n = vals.length, first = null, last = null;
     for (var i = 0; i < n; i++) {
       if (vals[i] == null || isNaN(vals[i])) continue;
@@ -1451,7 +1527,7 @@ footer .links a:hover { color: var(--text); }
     }
     state.view = view;
     chart.innerHTML = chrome(view) +
-      '<rect id="tr-hi" x="0" y="' + PT + '" width="0" height="' + plotH + '" fill="rgba(242,239,226,0.05)" visibility="hidden"/>' +
+      '<rect id="tr-hi" x="0" y="' + PT + '" width="0" height="' + plotH + '" fill="' + COL.hi + '" visibility="hidden"/>' +
       view.draw;
     legend.innerHTML = view.legend.map(function (l) {
       return '<span class="lg"><span class="lg-sw" style="background:' + l.c + (l.sq ? ';border-radius:2px' : '') + '"></span>' + esc(l.t) + '</span>';
@@ -1623,6 +1699,12 @@ footer .links a:hover { color: var(--text); }
     });
   }
 
+  // theme switch → re-read the palette and redraw whatever is on screen
+  window.addEventListener('sc-themechange', function () {
+    readPalette();
+    if (!wrap.hidden) { onLeave(); render(); }
+  });
+
   var started = false;
   function begin() { if (started) return; started = true; load(); }
   var section = wrap.closest('section') || wrap;
@@ -1706,7 +1788,7 @@ footer .links a:hover { color: var(--text); }
     btn.setAttribute("aria-busy", loading ? "true" : "false");
     if (label) label.textContent = loading ? "Sending…" : labelText;
   }
-  function showError(msg) { statusEl.style.color = "#ef6b6b"; statusEl.textContent = msg; }
+  function showError(msg) { statusEl.style.color = "var(--danger)"; statusEl.textContent = msg; }
   function showSuccess() {
     statusEl.textContent = ""; form.hidden = true;
     if (success) { success.hidden = false; success.scrollIntoView({ behavior: "smooth", block: "center" }); }

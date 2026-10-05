@@ -1443,7 +1443,8 @@ footer .links a:hover { color: var(--text); }
     $('tr-chartwrap').classList.toggle('is-clickable', !!(view && view.keyAt));
     if (!view || view.loading) {
       var msg = view ? 'Loading the night…' : state.days === 1
-        ? (SLEEP_DAY[state.metric] ? 'No sleep detail recorded for this night.' : 'No hourly readings for this day.')
+        ? (state.metric === 'stages' ? 'No sleep detail recorded for this night.'
+          : SLEEP_DAY[state.metric] ? 'The watch didn\u2019t record this overnight signal for this night.' : 'No hourly readings for this day.')
         : 'No readings in this window yet.';
       chart.innerHTML = '<text x="' + (W / 2) + '" y="' + (H / 2) + '" text-anchor="middle" font-size="13" fill="' + COL.axis + '" class="tr-empty">' + msg + '</text>';
       legend.innerHTML = ''; cap.textContent = ''; state.view = null; return;

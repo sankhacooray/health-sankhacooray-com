@@ -7,8 +7,9 @@ this file holds the context and gotchas behind them.
 
 ## State (2026-10-06)
 
-- Live Worker version `6036c6a0` = `main` @ `5f4d2ef` (merge of
-  `feat/intraday-steps`, branch kept). Local only — not yet pushed to GitHub.
+- Live Worker version `92521a76` = `main` @ `a64d5c0` (trends permalinks,
+  `?metric&range&date#trends` — see README "Permalinks"). Previous live was
+  `6036c6a0` (intraday + theme). Local only — not yet pushed to GitHub.
 - Hourly cron `17 * * * *` is running clean (`GET /api/health` → `sync`);
   intraday backfill was 67/90 days and completes on its own.
 - Rollback points: `npx wrangler rollback 8900e10f-dace-43e1-8bd8-0acc6797abfa`

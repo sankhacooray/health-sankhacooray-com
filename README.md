@@ -129,3 +129,24 @@ Light/dark switch in the app bar. Dark is the default look; the choice is saved
 in `localStorage` (`vitals-theme`), otherwise the OS preference applies. Colours
 are CSS tokens; the light palette overrides them under `:root[data-theme="light"]`
 and charts read their `--ch-*` tokens, redrawing on switch.
+
+## Permalinks
+
+"The longer view" keeps its state in the query string, so the address bar is
+always a shareable link to exactly what's on screen (the **Copy link** button
+copies the same URL):
+
+```
+/?metric=steps&range=day&date=2026-10-01#trends    # one day's hourly steps
+/?metric=steps&range=week#trends                   # last 7 days
+/?metric=stages&range=month#trends                 # last 30 nights
+```
+
+`range` = `day | week | month | 90d`; `date` (YYYY-MM-DD) applies to `day`
+only, and a lone `date` implies `day`. `metric` is any chip's `data-metric`
+(`stages score deep nightHr resp steps active distance calories bodyFat muscle
+hydration visceralFat vo2max restingHr`). Opening such a link loads the charts
+right away and scrolls to them; unknown or unavailable values fall back to the
+defaults. Week/Month/90 days are rolling windows ending today, so those links
+show the latest data rather than a frozen past week. The URL only changes once
+someone touches the controls (or arrived via a link), via `history.replaceState`.

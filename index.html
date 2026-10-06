@@ -301,6 +301,7 @@ footer .links a:hover { color: var(--text); }
 
 /* ─── TRENDS charts ─── */
 #trends[hidden] { display: none; }
+#trends { scroll-margin-top: 84px; }
 .trends { margin-top: 42px; padding-top: 38px; border-top: 1px solid var(--border-soft); }
 .tr-head { display: flex; flex-wrap: wrap; gap: 16px 20px; align-items: flex-end; justify-content: space-between; }
 .tr-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
@@ -316,6 +317,10 @@ footer .links a:hover { color: var(--text); }
 .tr-daystep { font-size: 16px; line-height: 1; color: var(--text-dim); background: transparent; border: 0; border-radius: 999px; width: 30px; height: 28px; cursor: pointer; transition: background .16s ease, color .16s ease; }
 .tr-daystep:hover:not(:disabled) { color: var(--gold); background: var(--gold-soft); }
 .tr-daystep:disabled { opacity: .3; cursor: default; }
+.tr-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border-soft); border-radius: 999px; padding: 10px 14px; cursor: pointer; transition: background .16s ease, color .16s ease, border-color .16s ease; }
+.tr-link:hover { color: var(--gold); border-color: var(--gold-dim); }
+.tr-link.is-done { color: var(--gold); background: var(--gold-soft); border-color: var(--gold-dim); }
+.tr-link svg { width: 13px; height: 13px; flex-shrink: 0; }
 .tr-daylabel { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text); min-width: 104px; text-align: center; }
 /* metrics without an hourly breakdown, while the Day range is on */
 .tr-metric.is-na { opacity: .38; }
@@ -753,6 +758,10 @@ footer .links a:hover { color: var(--text); }
         <button type="button" class="tr-range" data-days="30">Month</button>
         <button type="button" class="tr-range" data-days="90">90 days</button>
       </div>
+      <button type="button" class="tr-link" id="tr-link" title="Copy a link to exactly this view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <span id="tr-link-label">Copy link</span>
+      </button>
       </div>
     </div>
     <div class="tr-metrics" id="tr-metrics" role="tablist" aria-label="Metric">
@@ -1631,30 +1640,92 @@ footer .links a:hover { color: var(--text); }
         if (!DAY_OK[state.metric]) setMetric('steps');
         if (!state.day) { var k = dayKeys(); state.day = k[k.length - 1] || null; }
       }
-      onLeave(); render();
+      update();
     });
     $('tr-metrics').addEventListener('click', function (e) {
       var b = e.target.closest('.tr-metric'); if (!b) return;
       if (state.days === 1 && !DAY_OK[b.dataset.metric]) setRange(7);   // no hourly view → back to Week
-      setMetric(b.dataset.metric); onLeave(); render();
+      setMetric(b.dataset.metric); update();
     });
     $('tr-daynav').addEventListener('click', function (e) {
       var b = e.target.closest('.tr-daystep'); if (!b || b.disabled) return;
       var keys = dayKeys(), i = keys.indexOf(state.day) + Number(b.dataset.step);
-      if (i >= 0 && i < keys.length) { state.day = keys[i]; onLeave(); render(); }
+      if (i >= 0 && i < keys.length) { state.day = keys[i]; update(); }
     });
+    $('tr-link').addEventListener('click', copyLink);
     var cw = $('tr-chartwrap');
     cw.addEventListener('click', function (e) {   // drill a day bar down to its hours
       var view = state.view; if (!view || !view.keyAt) return;
       var i = chartIndex(e), key = i === -1 ? null : view.keyAt(i);
       if (!key) return;
-      state.day = key; setRange(1); onLeave(); render();
+      state.day = key; setRange(1); update();
     });
     cw.addEventListener('mousemove', onMove);
     cw.addEventListener('mouseleave', onLeave);
     cw.addEventListener('touchmove', function (e) { if (e.touches[0]) onMove(e.touches[0]); }, { passive: true });
     cw.addEventListener('touchend', onLeave);
   }
+  // ── permalinks ──
+  // The view lives in the query string so the address bar is always shareable:
+  //   ?metric=steps&range=day&date=2026-10-01#trends
+  //   ?metric=stages&range=month#trends
+  // range: day | week | month | 90d · date (Day range only): YYYY-MM-DD
+  var RANGE_KEY = { 1: 'day', 7: 'week', 30: 'month', 90: '90d' };
+  var URL_KEYS = ['metric', 'range', 'date'];
+  function viewUrl() {
+    var u = new URL(location.href), q = u.searchParams;
+    URL_KEYS.forEach(function (k) { q.delete(k); });   // fixed order: metric, range, date
+    q.set('metric', state.metric);
+    q.set('range', RANGE_KEY[state.days]);
+    if (state.days === 1 && state.day) q.set('date', state.day); else q.delete('date');
+    u.hash = 'trends';
+    return u.toString();
+  }
+  function syncUrl() { try { history.replaceState(history.state, '', viewUrl()); } catch (e) { /* file:// etc. */ } }
+  function update() { onLeave(); render(); syncUrl(); }
+  // Apply ?metric/range/date once chips are known. Returns true if the URL asked
+  // for a view. Bad or unavailable values fall back quietly to the defaults.
+  function applyUrl() {
+    var q = new URLSearchParams(location.search);
+    if (!URL_KEYS.some(function (k) { return q.has(k); })) return false;
+    var m = q.get('metric') || '', r = (q.get('range') || '').toLowerCase(), d = q.get('date') || '';
+    var hasDay = !!state.intra, keys = dayKeys();
+    var days = null;
+    Object.keys(RANGE_KEY).forEach(function (n) { if (RANGE_KEY[n] === r) days = Number(n); });
+    if (!days && /^\d{4}-\d{2}-\d{2}$/.test(d)) days = 1;   // a date alone means that day
+    if (days === 1 && !hasDay) days = 7;
+    var chip = /^\w+$/.test(m) && $('tr-metrics').querySelector('.tr-metric[data-metric="' + m + '"]');
+    if (chip && !chip.hidden) setMetric(m);
+    if (days) setRange(days);
+    if (state.days === 1) {
+      if (!DAY_OK[state.metric]) { if (chip && !chip.hidden) setRange(7); else setMetric('steps'); }
+      else state.day = keys.indexOf(d) !== -1 ? d : keys[keys.length - 1] || null;
+    }
+    return true;
+  }
+  var linkTimer = null;
+  function copyLink() {
+    syncUrl();
+    var btn = $('tr-link'), label = $('tr-link-label'), url = viewUrl();
+    function done(t) {
+      label.textContent = t; btn.classList.add('is-done');
+      clearTimeout(linkTimer);
+      linkTimer = setTimeout(function () { label.textContent = 'Copy link'; btn.classList.remove('is-done'); }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { done('Copied'); }, function () { done('Link in address bar'); });
+    } else done('Link in address bar');
+  }
+  // Opened from a shared link: bring the chart into view. Panels above it fill
+  // in asynchronously and push it down, so re-pin briefly unless the reader
+  // has started scrolling on their own.
+  function revealFromLink() {
+    var moved = false, stop = function () { moved = true; };
+    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
+    var pin = function () { if (!moved) wrap.scrollIntoView({ block: 'start' }); };
+    pin(); setTimeout(pin, 400); setTimeout(pin, 1200);
+  }
+
   function setOn(container, btn, cls) {
     container.querySelectorAll('.' + cls).forEach(function (el) { el.classList.remove('is-on'); });
     btn.classList.add('is-on');
@@ -1693,9 +1764,11 @@ footer .links a:hover { color: var(--text); }
       state.data = (t && t.ok && t.sleep && t.sleep.days && t.sleep.days.length) ? t : null;
       state.scale = (snap && snap.ok && snap.metrics) ? snap : null;
       if (!initChips()) return;   // no metrics on either sensor → stay hidden
+      var linked = applyUrl();
       wrap.hidden = false;
       bind();
       render();
+      if (linked || location.hash === '#trends') { syncUrl(); revealFromLink(); }
     });
   }
 
@@ -1708,7 +1781,9 @@ footer .links a:hover { color: var(--text); }
   var started = false;
   function begin() { if (started) return; started = true; load(); }
   var section = wrap.closest('section') || wrap;
-  if ('IntersectionObserver' in window) {
+  var q0 = new URLSearchParams(location.search);
+  if (location.hash === '#trends' || URL_KEYS.some(function (k) { return q0.has(k); })) begin();
+  else if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) { if (en.isIntersecting) { begin(); io.disconnect(); } });
     }, { rootMargin: '250px' });

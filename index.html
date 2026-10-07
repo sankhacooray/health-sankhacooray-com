@@ -325,7 +325,11 @@ footer .links a:hover { color: var(--text); }
 /* metrics without an hourly breakdown, while the Day range is on */
 .tr-metric.is-na { opacity: .38; }
 .tr-chartwrap.is-clickable { cursor: pointer; }
-.tr-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.tr-body { margin-top: 22px; }
+.tr-main { min-width: 0; }
+.tr-metrics { position: relative; display: flex; flex-wrap: wrap; gap: 8px; }
+.tr-group { display: none; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+.tr-group[hidden] { display: none !important; }
 .tr-metric { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 14px; cursor: pointer; transition: border-color .16s ease, color .16s ease, background .16s ease; }
 .tr-metric:hover { border-color: var(--gold-dim); color: var(--text); }
 .tr-metric.is-on { border-color: var(--gold); color: var(--gold); background: var(--gold-soft); }
@@ -336,6 +340,22 @@ footer .links a:hover { color: var(--text); }
 .tr-metric[data-src="scale"].is-on { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-soft); }
 .tr-metric[data-src="scale"]:hover { border-color: var(--cyan); }
 .tr-chartwrap { position: relative; margin-top: 24px; }
+/* wide screens: filters become a fixed-width side rail beside the chart */
+@media (min-width: 900px) {
+  .tr-body { display: grid; grid-template-columns: 184px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .tr-metrics { flex-direction: column; flex-wrap: nowrap; gap: 5px; }
+  .tr-metric { width: 100%; padding: 6px 12px; font-size: 11.5px; }
+  .tr-group { display: block; margin: 0 0 3px 2px; }
+  .tr-group ~ .tr-group { margin-top: 14px; }
+  .tr-chartwrap { margin-top: 0; }
+}
+/* narrow screens: one swipeable row of filters instead of a wall of chips */
+@media (max-width: 899px) {
+  .tr-metrics { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+  .tr-metrics::-webkit-scrollbar { display: none; }
+  .tr-metric { flex-shrink: 0; white-space: nowrap; }
+}
 .tr-chart { width: 100%; height: auto; display: block; overflow: visible; }
 .tr-chart text { font-family: 'JetBrains Mono', monospace; }
 .tr-tip { position: absolute; pointer-events: none; z-index: 5; top: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12px; color: var(--text); box-shadow: var(--shadow); min-width: 128px; transform: translateX(-50%); }
@@ -764,8 +784,10 @@ footer .links a:hover { color: var(--text); }
       </button>
       </div>
     </div>
+    <div class="tr-body">
     <div class="tr-metrics" id="tr-metrics" role="tablist" aria-label="Metric">
       <!-- ScanWatch 2 (wrist) metrics — flagged with a watch icon by JS -->
+      <div class="tr-group" data-group="watch" role="presentation">Watch · ScanWatch 2</div>
       <button type="button" class="tr-metric is-on" data-src="watch" data-metric="stages">Sleep stages</button>
       <button type="button" class="tr-metric" data-src="watch" data-metric="score">Sleep score</button>
       <button type="button" class="tr-metric" data-src="watch" data-metric="deep">Deep sleep</button>
@@ -777,6 +799,7 @@ footer .links a:hover { color: var(--text); }
       <button type="button" class="tr-metric" data-src="watch" data-metric="calories">Calories</button>
       <!-- Body Scan (scale) metrics — flagged with a scale icon by JS; each is
            hidden until the snapshot confirms the metric has readings -->
+      <div class="tr-group" data-group="scale" role="presentation">Scale · Body Scan</div>
       <button type="button" class="tr-metric" data-src="scale" data-metric="bodyFat" hidden>Body fat</button>
       <button type="button" class="tr-metric" data-src="scale" data-metric="muscle" hidden>Muscle</button>
       <button type="button" class="tr-metric" data-src="scale" data-metric="hydration" hidden>Hydration</button>
@@ -784,12 +807,15 @@ footer .links a:hover { color: var(--text); }
       <button type="button" class="tr-metric" data-src="scale" data-metric="vo2max" hidden>VO&#8322; max</button>
       <button type="button" class="tr-metric" data-src="scale" data-metric="restingHr" hidden>Resting HR</button>
     </div>
+    <div class="tr-main">
     <div class="tr-chartwrap" id="tr-chartwrap">
       <svg class="tr-chart" id="tr-chart" viewBox="0 0 760 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Trend chart"></svg>
       <div class="tr-tip" id="tr-tip" hidden></div>
     </div>
     <div class="tr-legend" id="tr-legend"></div>
     <p class="tr-caption" id="tr-caption"></p>
+    </div>
+    </div>
   </div>
 
   <div class="consent-card">
@@ -1050,6 +1076,22 @@ footer .links a:hover { color: var(--text); }
   // ── geometry ──
   var W = 760, H = 300, PL = 46, PR = 16, PT = 18, PB = 32;
   var plotW = W - PL - PR, plotH = H - PT - PB, baseY = PT + plotH;
+  // Draw in (roughly) real pixels: W tracks the box width so axis text stays
+  // ~10px on every screen, and H is sized so the whole trends block fits the
+  // window height (capped to a sane aspect). Returns true if the size changed.
+  function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
+  function fitChart() {
+    var px = $('tr-chartwrap').clientWidth; if (!px) return false;
+    var w = Math.round(clamp(px, 420, 1200)), sc = px / w;
+    var hdr = (document.querySelector('.site-header') || {}).offsetHeight || 0;
+    var wide = window.matchMedia('(min-width: 900px)').matches;
+    var targetPx = clamp(window.innerHeight - hdr - (wide ? 230 : 290), 220, 500);
+    var h = Math.round(clamp(targetPx / sc, 260, w * 0.75));
+    if (w === W && h === H) return false;
+    W = w; H = h; plotW = W - PL - PR; plotH = H - PT - PB; baseY = PT + plotH;
+    $('tr-chart').setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    return true;
+  }
 
   function lastN(arr, n) { arr = arr || []; return arr.slice(Math.max(0, arr.length - n)); }
   function fmtDay(e) { return new Date(e * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
@@ -1521,7 +1563,14 @@ footer .links a:hover { color: var(--text); }
     return g + (view.under || '');
   }
 
+  // swipeable chip row (narrow screens): keep the active chip in view
+  function showActiveChip() {
+    var row = $('tr-metrics'), btn = row.querySelector('.tr-metric.is-on');
+    if (btn && row.scrollWidth > row.clientWidth) row.scrollLeft = btn.offsetLeft - (row.clientWidth - btn.offsetWidth) / 2;
+  }
   function render() {
+    fitChart();
+    showActiveChip();
     syncDayUi();
     var view = buildView(state.metric, state.days);
     var chart = $('tr-chart'), legend = $('tr-legend'), cap = $('tr-caption');
@@ -1600,8 +1649,8 @@ footer .links a:hover { color: var(--text); }
   }
   function setMetric(metric) {
     state.metric = metric;
-    var btn = $('tr-metrics').querySelector('[data-metric="' + metric + '"]');
-    if (btn) setOn($('tr-metrics'), btn, 'tr-metric');
+    var row = $('tr-metrics'), btn = row.querySelector('[data-metric="' + metric + '"]');
+    if (btn) setOn(row, btn, 'tr-metric');
   }
   function chartIndex(e) {
     var view = state.view; if (!view) return -1;
@@ -1722,7 +1771,13 @@ footer .links a:hover { color: var(--text); }
   function revealFromLink() {
     var moved = false, stop = function () { moved = true; };
     ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, stop, { once: true, passive: true }); });
-    var pin = function () { if (!moved) wrap.scrollIntoView({ block: 'start' }); };
+    var pin = function () {
+      if (moved) return;
+      var hdr = (document.querySelector('.site-header') || {}).offsetHeight || 0;
+      var r = wrap.getBoundingClientRect(), room = window.innerHeight - hdr;
+      var pad = r.height < room ? (room - r.height) / 2 : 12;   // centre if it fits, else top-align
+      window.scrollTo(0, window.scrollY + r.top - hdr - pad);
+    };
     pin(); setTimeout(pin, 400); setTimeout(pin, 1200);
   }
 
@@ -1744,6 +1799,9 @@ footer .links a:hover { color: var(--text); }
       if (ok) { anyOn = true; if (!firstOn) firstOn = b; }
     });
     if (!anyOn) return false;
+    $('tr-metrics').querySelectorAll('.tr-group').forEach(function (g) {
+      g.hidden = !btns.some(function (b) { return b.dataset.src === g.dataset.group && !b.hidden; });
+    });
     var cur = btns.filter(function (b) { return b.dataset.metric === state.metric; })[0];
     if (!cur || cur.hidden) { state.metric = firstOn.dataset.metric; setOn($('tr-metrics'), firstOn, 'tr-metric'); }
     return true;
@@ -1776,6 +1834,12 @@ footer .links a:hover { color: var(--text); }
   window.addEventListener('sc-themechange', function () {
     readPalette();
     if (!wrap.hidden) { onLeave(); render(); }
+  });
+
+  var fitTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(fitTimer);
+    fitTimer = setTimeout(function () { if (!wrap.hidden && fitChart()) { onLeave(); render(); } }, 150);
   });
 
   var started = false;

@@ -7,7 +7,7 @@ this file holds the context and gotchas behind them.
 
 ## State (2026-10-06)
 
-- Live Worker version `92521a76` = `main` @ `a64d5c0` (trends permalinks,
+- Live Worker version `c3a2b722` (filter side rail + viewport-fit chart) on top of `92521a76` (trends permalinks,
   `?metric&range&date#trends` — see README "Permalinks"). Previous live was
   `6036c6a0` (intraday + theme). Local only — not yet pushed to GitHub.
 - Hourly cron `17 * * * *` is running clean (`GET /api/health` → `sync`);

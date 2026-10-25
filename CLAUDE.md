@@ -5,9 +5,17 @@ served by a Cloudflare Worker (`worker.js`, Worker name `health`) that also brok
 Withings. README.md covers endpoints, deploy commands and theming in detail;
 this file holds the context and gotchas behind them.
 
-## State (2026-10-06)
+## State (2026-10-25)
 
-- Live Worker version `c3a2b722` (filter side rail + viewport-fit chart) on top of `92521a76` (trends permalinks,
+- Live Worker version `fb9d593b` (ui-ux-style restyle, 25 Oct 2026): full-width app
+  bar with scrollspy pills + "Collaborate on research" CTA, hero fasting-ring
+  illustration with live chips, screen-fit groups (↑/↓ page), body-as-scroller,
+  ambient particle canvas, tabbed Live Signal (Scale · Watch · Trends · Research,
+  remembered in `localStorage` `vitals-live-tab`), one-line footer with the
+  medical disclaimer behind ⓘ (the shared `sankha-footer.js` is no longer used),
+  theme key moved to `sc-theme` (old `vitals-theme` still read once). Rollback:
+  `npx wrangler rollback c3a2b722` (pre-restyle).
+- Previous live version `c3a2b722` (filter side rail + viewport-fit chart) on top of `92521a76` (trends permalinks,
   `?metric&range&date#trends` — see README "Permalinks"). Previous live was
   `6036c6a0` (intraday + theme). Local only — not yet pushed to GitHub.
 - Hourly cron `17 * * * *` is running clean (`GET /api/health` → `sync`);

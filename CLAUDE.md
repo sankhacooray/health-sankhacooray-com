@@ -90,3 +90,12 @@ puppeteer-core + system Chrome. Use a port outside the reserved 4710–4779 band
 - Withings Notify webhooks (appli 16 activity / 44 sleep) instead of hourly
   polling, for near-real-time correction after a sync.
 - Push `main` + `feat/intraday-steps` to GitHub.
+
+## Lighthouse
+
+<!-- lighthouse-optimized: 2026-10-31 -->
+- Baseline mobile (31 Oct 2026): performance 98 · accessibility 100 · best-practices 100 · SEO 100.
+- Fixed: Google Fonts CSS made non-blocking (preconnect to fonts.googleapis/gstatic, `media=print` swap +
+  noscript); contrast was already fixed earlier the same day (see State).
+- Left: remaining findings are the shared scripts (sankha-analytics/contact, gtag) and the Cloudflare
+  Insights beacon, handled centrally; no own assets were flagged for cache TTL.

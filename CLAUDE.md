@@ -7,6 +7,9 @@ this file holds the context and gotchas behind them.
 
 ## State (2026-10-25)
 
+- Live Worker version `a95a16f7` (31 Oct 2026): contrast pass, Lighthouse a11y 100 in
+  both themes (`--text-muted` dark #8a9177 / light #666c5c; light `--gold` #58721b,
+  `--cyan` #975c17). Keep text tokens ≥4.5:1 on `--surface2`. Rollback: `npx wrangler rollback f0c79343`.
 - Live Worker version `f0c79343` (31 Oct 2026): fasting copy is now 16:8 (ring arc,
   chips, protocol cards); hero live chips render as placeholders with a shimmer
   value until `/api/vitals` lands, plus a "live readings from Withings" note.

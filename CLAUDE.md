@@ -7,6 +7,10 @@ this file holds the context and gotchas behind them.
 
 ## State (2026-10-25)
 
+- Live Worker version `f0c79343` (31 Oct 2026): fasting copy is now 16:8 (ring arc,
+  chips, protocol cards); hero live chips render as placeholders with a shimmer
+  value until `/api/vitals` lands, plus a "live readings from Withings" note.
+  Rollback: `npx wrangler rollback fb9d593b`.
 - Live Worker version `fb9d593b` (ui-ux-style restyle, 25 Oct 2026): full-width app
   bar with scrollspy pills + "Collaborate on research" CTA, hero fasting-ring
   illustration with live chips, screen-fit groups (↑/↓ page), body-as-scroller,

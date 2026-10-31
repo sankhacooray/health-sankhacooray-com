@@ -174,6 +174,12 @@ a { color: inherit; text-decoration: none; }
 .hchip.amber::before { background: var(--cyan); }
 .hchip.live::before { box-shadow: 0 0 0 0 rgba(168,196,90,0.6); animation: pulse 2s infinite; }
 .hchip b { color: var(--text); font-weight: 600; }
+.hchip-load { display: inline-block; width: 3.2em; height: 9px; border-radius: 3px; vertical-align: -1px; background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: hchip-shimmer 1.2s linear infinite; }
+@keyframes hchip-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.hero-live-note { display: inline-flex; align-items: center; gap: 7px; margin-top: -4px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .5px; color: var(--text-muted); }
+.hero-live-note[hidden] { display: none; }
+.hchip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 rgba(168,196,90,0.6); animation: pulse 2s infinite; }
+@media (prefers-reduced-motion: reduce) { .hchip-load, .hchip-dot, .hchip.live::before { animation: none; } }
 @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-art svg { max-width: 260px; } }
 .hero .meta { display: flex; flex-wrap: wrap; gap: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); }
 .hero .meta span::before { content: "◦"; margin-right: 10px; color: var(--gold-dim); }
@@ -508,21 +514,25 @@ a { color: inherit; text-decoration: none; }
     </div>
   </div>
   <div class="hero-art">
-    <svg viewBox="0 0 480 400" role="img" aria-label="A 24-hour ring: about 18 hours fasted, a 6-hour eating window">
+    <svg viewBox="0 0 480 400" role="img" aria-label="A 24-hour ring: about 16 hours fasted, an 8-hour eating window">
       <circle cx="240" cy="200" r="140" fill="none" style="stroke:var(--surface2)" stroke-width="20"/>
       <circle cx="240" cy="200" r="116" fill="none" style="stroke:var(--border-soft)" stroke-width="1" stroke-dasharray="2 7"/>
-      <path d="M100.2,192.7 A140,140 0 1 1 247.3,339.8" fill="none" style="stroke:var(--gold)" stroke-width="20"/>
-      <path d="M232.7,339.8 A140,140 0 0 1 100.2,207.3" fill="none" style="stroke:var(--cyan)" stroke-width="20"/>
+      <path d="M122.6,123.8 A140,140 0 1 1 247.3,339.8" fill="none" style="stroke:var(--gold)" stroke-width="20"/>
+      <path d="M232.7,339.8 A140,140 0 0 1 115.3,136.4" fill="none" style="stroke:var(--cyan)" stroke-width="20"/>
       <line x1="240.0" y1="42.0" x2="240.0" y2="28.0" style="stroke:var(--text-dim)" stroke-width="2" stroke-linecap="round"/><line x1="280.9" y1="47.4" x2="283.0" y2="39.7" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="319.0" y1="63.2" x2="323.0" y2="56.2" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="351.7" y1="88.3" x2="357.4" y2="82.6" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="376.8" y1="121.0" x2="383.8" y2="117.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="392.6" y1="159.1" x2="400.3" y2="157.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="398.0" y1="200.0" x2="412.0" y2="200.0" style="stroke:var(--text-dim)" stroke-width="2" stroke-linecap="round"/><line x1="392.6" y1="240.9" x2="400.3" y2="243.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="376.8" y1="279.0" x2="383.8" y2="283.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="351.7" y1="311.7" x2="357.4" y2="317.4" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="319.0" y1="336.8" x2="323.0" y2="343.8" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="280.9" y1="352.6" x2="283.0" y2="360.3" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="240.0" y1="358.0" x2="240.0" y2="372.0" style="stroke:var(--text-dim)" stroke-width="2" stroke-linecap="round"/><line x1="199.1" y1="352.6" x2="197.0" y2="360.3" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="161.0" y1="336.8" x2="157.0" y2="343.8" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="128.3" y1="311.7" x2="122.6" y2="317.4" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="103.2" y1="279.0" x2="96.2" y2="283.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="87.4" y1="240.9" x2="79.7" y2="243.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="82.0" y1="200.0" x2="68.0" y2="200.0" style="stroke:var(--text-dim)" stroke-width="2" stroke-linecap="round"/><line x1="87.4" y1="159.1" x2="79.7" y2="157.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="103.2" y1="121.0" x2="96.2" y2="117.0" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="128.3" y1="88.3" x2="122.6" y2="82.6" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="161.0" y1="63.2" x2="157.0" y2="56.2" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/><line x1="199.1" y1="47.4" x2="197.0" y2="39.7" style="stroke:var(--border)" stroke-width="1.5" stroke-linecap="round"/>
       <text x="240.0" y="10.0" class="ring-lab" font-size="11" text-anchor="middle" dominant-baseline="middle" style="fill:var(--text-muted)">0h</text><text x="432.0" y="200.0" class="ring-lab" font-size="11" text-anchor="middle" dominant-baseline="middle" style="fill:var(--text-muted)">6h</text><text x="240.0" y="392.0" class="ring-lab" font-size="11" text-anchor="middle" dominant-baseline="middle" style="fill:var(--text-muted)">12h</text><text x="48.0" y="200.0" class="ring-lab" font-size="11" text-anchor="middle" dominant-baseline="middle" style="fill:var(--text-muted)">18h</text>
-      <text x="240" y="194" class="ring-txt" font-size="58" text-anchor="middle" dominant-baseline="auto" style="fill:var(--gold)">~18 h</text>
+      <text x="240" y="194" class="ring-txt" font-size="58" text-anchor="middle" dominant-baseline="auto" style="fill:var(--gold)">~16 h</text>
       <text x="240" y="220" class="ring-sub" font-size="14" text-anchor="middle" style="fill:var(--text-dim)">fasted, most days</text>
-      <text x="240" y="246" class="ring-lab" font-size="11" text-anchor="middle" style="fill:var(--cyan)">6 h eating window</text>
+      <text x="240" y="246" class="ring-lab" font-size="11" text-anchor="middle" style="fill:var(--cyan)">8 h eating window</text>
     </svg>
     <div class="hero-chips" id="hero-chips">
-      <span class="hchip">fasted ~18 h</span>
-      <span class="hchip amber">eating ~6 h</span>
+      <span class="hchip">fasted ~16 h</span>
+      <span class="hchip amber">eating ~8 h</span>
+      <span class="hchip live pending"><b><i class="hchip-load" aria-hidden="true"></i></b> sleep score</span>
+      <span class="hchip live pending"><b><i class="hchip-load" aria-hidden="true"></i></b> sleep</span>
+      <span class="hchip live pending"><b><i class="hchip-load" aria-hidden="true"></i></b> body fat</span>
     </div>
+    <div class="hero-live-note" id="hero-live-note"><span class="hchip-dot" aria-hidden="true"></span>pulsing chips are live readings from Withings</div>
   </div>
 </section>
 
@@ -579,12 +589,12 @@ a { color: inherit; text-decoration: none; }
   <div class="protocol">
     <div class="proto">
       <div class="label">eating window</div>
-      <div class="value">~ 6 h</div>
+      <div class="value">~ 8 h</div>
       <div class="desc">Daily intermittent fasting. The window flexes around training and social food, but the rhythm holds.</div>
     </div>
     <div class="proto">
       <div class="label">fasted hours</div>
-      <div class="value cool">~ 18 h</div>
+      <div class="value cool">~ 16 h</div>
       <div class="desc">Long enough most days to brush against autophagy — the body's housekeeping mode.</div>
     </div>
     <div class="proto">
@@ -1065,11 +1075,12 @@ a { color: inherit; text-decoration: none; }
   // Hero: up to three current readings as chips (two from the wrist, one from the scale).
   function heroChips(d) {
     var box = $('hero-chips'); if (!box || box.dataset.live) return;
+    clearHeroPending(false);
     var picks = [];
     function take(ms, upTo) { Object.keys(ms || {}).forEach(function (k) { if (picks.length < upTo) picks.push(ms[k]); }); }
     if (d.watch && d.watch.metrics) take(d.watch.metrics, 2);
     take(d.metrics, 3);
-    if (!picks.length) return;
+    if (!picks.length) return clearHeroPending(true);
     box.dataset.live = '1';
     picks.forEach(function (m) {
       var s = document.createElement('span'); s.className = 'hchip live';
@@ -1077,6 +1088,12 @@ a { color: inherit; text-decoration: none; }
       s.appendChild(b); s.appendChild(document.createTextNode(' ' + String(m.label).toLowerCase()));
       box.appendChild(s);
     });
+  }
+
+  // Drop the loading placeholders; with noData also drop the "live" note.
+  function clearHeroPending(noData) {
+    document.querySelectorAll('#hero-chips .hchip.pending').forEach(function (c) { c.remove(); });
+    if (noData && $('hero-live-note')) $('hero-live-note').hidden = true;
   }
 
   // Compact history table: metrics as rows, the last 8 readings as columns
@@ -1125,7 +1142,7 @@ a { color: inherit; text-decoration: none; }
   fetch(VITALS_ENDPOINT, { cache: 'no-store' })
     .then(function (r) { return r.json(); })
     .then(render)
-    .catch(function () { /* stay hidden on failure — never show a broken section */ });
+    .catch(function () { clearHeroPending(true); /* stay hidden on failure — never show a broken section */ });
 })();
 </script>
 

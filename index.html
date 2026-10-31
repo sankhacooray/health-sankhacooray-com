@@ -34,6 +34,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/instrumentserif/v5/jizBRFtNs2ka5fXjeivQ4LroWlx-6zUTjnTLgNs.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/instrumentserif/v5/jizHRFtNs2ka5fXjeivQ4LroWlx-6zAjjH7Motmp5g.woff2">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 
@@ -47,6 +49,10 @@
 })();
 </script>
 <style>
+/* Fonts load non-blocking; these metric-matched local fallbacks keep the hero from re-wrapping when they swap in. */
+@font-face { font-family: "Instrument Serif Fallback"; src: local("Times New Roman"), local("TimesNewRomanPSMT"), local("Liberation Serif"), local("Tinos"); size-adjust: 83%; }
+@font-face { font-family: "Instrument Serif Fallback"; font-style: italic; src: local("Times New Roman Italic"), local("TimesNewRomanPS-ItalicMT"), local("Liberation Serif Italic"), local("Tinos Italic"); size-adjust: 88.5%; }
+@font-face { font-family: "DM Sans Fallback"; src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"); size-adjust: 91%; }
 :root {
   --bg: #0e120a;
   --surface: #181c10;
@@ -114,7 +120,7 @@
 html { height: 100%; overflow: hidden; background: var(--bg); overscroll-behavior: none; }
 body {
   height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior: none; scroll-behavior: smooth;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans', 'DM Sans Fallback', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.55;
@@ -137,7 +143,7 @@ a { color: inherit; text-decoration: none; }
 .site-header { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); background: var(--header-bg); padding-top: env(safe-area-inset-top, 0px); }
 .site-header .inner { display: flex; align-items: center; gap: 12px; height: 62px; padding-inline: max(24px, env(safe-area-inset-left, 0px)) max(24px, env(safe-area-inset-right, 0px)); }
 .brand { display: flex; align-items: baseline; gap: 10px; flex-shrink: 0; }
-.brand-mark { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--gold); letter-spacing: -0.5px; }
+.brand-mark { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-size: 28px; color: var(--gold); letter-spacing: -0.5px; }
 .brand-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
 .nav { display: flex; gap: 2px; margin-left: 6px; font-size: 14px; color: var(--text-dim); }
 .nav a { padding: 6px 12px; border-radius: 999px; transition: background-color .25s ease, color .25s ease; }
@@ -163,14 +169,14 @@ a { color: inherit; text-decoration: none; }
 .group { display: flex; flex-direction: column; justify-content: center; scroll-margin-top: var(--bar-h, 62px); }
 .hero { max-width: var(--maxw); width: 100%; margin: 0 auto; padding: clamp(16px, 3vh, 44px) 28px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(24px, 5vw, 72px); align-items: center; }
 .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: clamp(12px, 2.4vh, 24px); }
-.hero h1 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: clamp(40px, min(6.4vw, 10.5vh), 84px); line-height: 1.05; letter-spacing: -1.5px; color: var(--text); margin-bottom: clamp(14px, 2.8vh, 28px); }
+.hero h1 { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-weight: 400; font-size: clamp(40px, min(6.4vw, 10.5vh), 84px); line-height: 1.05; letter-spacing: -1.5px; color: var(--text); margin-bottom: clamp(14px, 2.8vh, 28px); }
 .hero h1 em { color: var(--gold); font-style: italic; }
 .hero .lede { font-size: clamp(16px, 2.4vh, 19px); color: var(--text-dim); max-width: 640px; margin-bottom: clamp(16px, 3.2vh, 40px); }
 .hero-art { display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .hero-art svg { width: 100%; max-width: clamp(240px, 54vh, 440px); height: auto; display: block; overflow: visible; }
-.hero-art .ring-txt { font-family: 'Instrument Serif', serif; }
+.hero-art .ring-txt { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; }
 .hero-art .ring-lab { font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase; }
-.hero-art .ring-sub { font-family: 'DM Sans', sans-serif; }
+.hero-art .ring-sub { font-family: 'DM Sans', 'DM Sans Fallback', sans-serif; }
 .hero-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .hchip { display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 12px; border-radius: 999px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border-soft); white-space: nowrap; }
 .hchip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
@@ -190,7 +196,7 @@ a { color: inherit; text-decoration: none; }
 .section { max-width: var(--maxw); width: 100%; margin: 0 auto; padding: clamp(16px, 3vh, 44px) 28px; }
 .section-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px 16px; margin-bottom: clamp(14px, 2.6vh, 32px); }
 .section-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); letter-spacing: 1px; }
-.section h2 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: clamp(28px, 4.4vh, 36px); letter-spacing: -0.5px; }
+.section h2 { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-weight: 400; font-size: clamp(28px, 4.4vh, 36px); letter-spacing: -0.5px; }
 
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 48px); }
 .about-grid p { font-size: clamp(15px, 2.2vh, 17px); color: var(--text-dim); }
@@ -205,7 +211,7 @@ a { color: inherit; text-decoration: none; }
 .proto { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-sm); padding: clamp(14px, 2.4vh, 20px) 18px; transition: background-color .25s ease; }
 .proto:hover { background: var(--card-hover); }
 .proto .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
-.proto .value { font-family: 'Instrument Serif', serif; font-size: clamp(22px, 3.6vh, 28px); color: var(--gold); margin-bottom: 6px; }
+.proto .value { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-size: clamp(22px, 3.6vh, 28px); color: var(--gold); margin-bottom: 6px; }
 .proto .value.cool { color: var(--cyan); }
 .proto .desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
 
@@ -216,7 +222,7 @@ a { color: inherit; text-decoration: none; }
 .card:hover { background: var(--card-hover); }
 .card .role { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
 .card .role.cool { color: var(--cyan); }
-.card h3 { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; margin-bottom: 6px; letter-spacing: -0.2px; }
+.card h3 { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-size: 22px; font-weight: 400; margin-bottom: 6px; letter-spacing: -0.2px; }
 .card .where { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
 .card p { font-size: 14px; color: var(--text-dim); }
 .card .link { margin-top: 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px; }
@@ -230,7 +236,7 @@ a { color: inherit; text-decoration: none; }
 .belief:hover { background: var(--card-hover); }
 /* icon and title share one row; the description starts at the card's left edge (rule 31) */
 .card-head { display: flex; align-items: center; gap: 10px; }
-.belief .glyph { width: 32px; height: 32px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', serif; font-size: 18px; color: var(--gold); flex-shrink: 0; }
+.belief .glyph { width: 32px; height: 32px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-size: 18px; color: var(--gold); flex-shrink: 0; }
 .belief .name { font-size: 14px; font-weight: 500; color: var(--text); }
 .belief .desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; margin-top: 8px; }
 
@@ -244,10 +250,10 @@ a { color: inherit; text-decoration: none; }
 .contact-body { margin-block: auto; width: 100%; }
 .footer { margin-top: auto; padding-top: clamp(18px, 4vh, 44px); }
 .footer .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; font-size: 13.5px; color: var(--text-muted); }
-.footer .wrap .mark { font-family: 'Instrument Serif', serif; color: var(--gold); font-size: 17px; }
+.footer .wrap .mark { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; color: var(--gold); font-size: 17px; }
 .footer a { color: var(--text-dim); }
 .footer a:hover { color: var(--gold); }
-.info { all: unset; cursor: help; width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-family: 'Instrument Serif', serif; font-style: italic; box-shadow: inset 0 0 0 1px var(--border); color: var(--text-dim); position: relative; z-index: 41; }
+.info { all: unset; cursor: help; width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-style: italic; box-shadow: inset 0 0 0 1px var(--border); color: var(--text-dim); position: relative; z-index: 41; }
 .info:focus-visible { box-shadow: inset 0 0 0 1px var(--gold), 0 0 0 2px var(--gold-soft); }
 .glass { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 24px; background: color-mix(in srgb, var(--bg) 55%, transparent); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .45s ease, visibility 0s linear .45s; }
 .glass.on { opacity: 1; visibility: visible; transition: opacity .45s ease, visibility 0s; }
@@ -270,7 +276,7 @@ a { color: inherit; text-decoration: none; }
 .vstat:hover { background: var(--card-hover); }
 .vstat .vbody { min-width: 0; }
 .vstat .vlabel { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-.vstat .vbig { font-family: 'Instrument Serif', serif; font-size: clamp(34px, 5.4vh, 44px); line-height: 1; color: var(--gold); }
+.vstat .vbig { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-size: clamp(34px, 5.4vh, 44px); line-height: 1; color: var(--gold); }
 .vstat .vbig small { font-size: 16px; color: var(--text-dim); }
 .vstat.amber .vbig { color: var(--cyan); }
 .vstat .vsub { font-size: 13px; color: var(--text-dim); margin-top: 8px; }
@@ -291,8 +297,8 @@ a { color: inherit; text-decoration: none; }
 .signal .ring { flex-shrink: 0; }
 .signal .sbody { flex: 1; min-width: 0; }
 .signal .slabel { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
-.signal .snum { font-family: 'Instrument Serif', serif; font-size: 30px; line-height: 1.1; color: var(--text); margin-top: 2px; }
-.signal .snum small { font-size: 13px; color: var(--text-dim); font-family: 'DM Sans', sans-serif; }
+.signal .snum { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-size: 30px; line-height: 1.1; color: var(--text); margin-top: 2px; }
+.signal .snum small { font-size: 13px; color: var(--text-dim); font-family: 'DM Sans', 'DM Sans Fallback', sans-serif; }
 .signal .spark { margin-top: 8px; height: 26px; width: 100%; display: block; }
 .signal .sfoot { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; font-size: 11px; color: var(--text-muted); }
 .signal .sfoot .good { color: var(--gold); }
@@ -326,7 +332,7 @@ a { color: inherit; text-decoration: none; }
 .htab tbody tr:nth-child(odd) th, .htab tbody tr:nth-child(odd) td { background: var(--surface); }
 .htab td.cur { color: var(--gold); font-weight: 600; }
 .htab .hunit { color: var(--text-muted); font-size: 11px; }
-.live-motiv { font-family: 'Instrument Serif', serif; font-style: italic; font-size: clamp(18px, 2.8vh, 22px); color: var(--text-dim); max-width: 640px; margin-top: clamp(14px, 2.6vh, 24px); line-height: 1.4; }
+.live-motiv { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-style: italic; font-size: clamp(18px, 2.8vh, 22px); color: var(--text-dim); max-width: 640px; margin-top: clamp(14px, 2.6vh, 24px); line-height: 1.4; }
 .live-motiv span { color: var(--gold); }
 @media (max-height: 780px) and (min-width: 901px) { .live-motiv { display: none; } }   /* the quote yields so the tab fits a laptop screen */
 
@@ -346,7 +352,7 @@ a { color: inherit; text-decoration: none; }
 .consent-card .card-head { gap: 14px; }
 .consent-card .cicon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: var(--gold-tint); color: var(--gold); }
 .consent-card .ctag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
-.consent-card h3 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 24px; line-height: 1.2; color: var(--text); margin: 0; }
+.consent-card h3 { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-weight: 400; font-size: 24px; line-height: 1.2; color: var(--text); margin: 0; }
 .consent-card p { font-size: 14px; color: var(--text-dim); line-height: 1.65; margin: 12px 0 0; max-width: 760px; }
 .consent-card .clink { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
 .consent-card .clink:hover { text-decoration: underline; }
@@ -379,7 +385,7 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 640px) { .live-tabs { margin-left: 0; max-width: 100%; overflow-x: auto; scrollbar-width: none; } .live-tabs::-webkit-scrollbar { display: none; } }
 .tr-head { display: flex; flex-wrap: wrap; gap: 16px 20px; align-items: flex-end; justify-content: space-between; }
 .tr-eyebrow { display: none; }
-.tr-title { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 26px; line-height: 1.1; color: var(--text); margin: 0; }
+.tr-title { font-family: 'Instrument Serif', 'Instrument Serif Fallback', serif; font-weight: 400; font-size: 26px; line-height: 1.1; color: var(--text); margin: 0; }
 .tr-ranges { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: 999px; padding: 4px; }
 .tr-range { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-dim); background: transparent; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; transition: background .16s ease, color .16s ease; }
 .tr-range:hover { color: var(--text); }

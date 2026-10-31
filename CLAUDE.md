@@ -7,6 +7,10 @@ this file holds the context and gotchas behind them.
 
 ## State (2026-10-25)
 
+- Live Worker version `90aea26a` (31 Oct 2026): Instrument Serif woff2 preloads + size-adjusted local
+  fallback fonts, because non-blocking Google Fonts made the hero re-wrap on swap (desktop CLS 0.34 → 0.002).
+  The preload URLs are Google's versioned files (instrumentserif v5); if Google bumps them the preload is
+  wasted but nothing breaks. Rollback: `npx wrangler rollback 8a386434`.
 - Live Worker version `a95a16f7` (31 Oct 2026): contrast pass, Lighthouse a11y 100 in
   both themes (`--text-muted` dark #8a9177 / light #666c5c; light `--gold` #58721b,
   `--cyan` #975c17). Keep text tokens ≥4.5:1 on `--surface2`. Rollback: `npx wrangler rollback f0c79343`.
